@@ -20,7 +20,7 @@
   (reader/read reader))
 
 (defn read-str
-  "Given a HL7 message string, parse the message in the string and return the
+  "Given a string containing a HL7 message, parse the string and return the
   result."
   [s]
   (expect String s)
