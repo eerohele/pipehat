@@ -29,3 +29,5 @@ user=> (pipehat/read-str input)
 user=> (assert (= (pipehat/write-str (pipehat/read-str input))))
 ;;=> true
 ```
+
+For more examples, see [`hello.repl`](https://github.com/eerohele/pipehat/blob/main/repl/hello.repl).
