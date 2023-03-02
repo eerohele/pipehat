@@ -5,7 +5,7 @@
             [pipehat.impl.const :refer [SB EB CR]]
             [pipehat.impl.reader :refer [<<]])
   (:import (clojure.lang ExceptionInfo)
-           (java.io BufferedWriter PipedReader PipedWriter PushbackReader)))
+           (java.io BufferedReader BufferedWriter InputStreamReader OutputStreamWriter PipedInputStream PipedOutputStream PushbackReader)))
 
 (deftest read
   (are [in out] (= out (sut/read (<< in)))
@@ -89,15 +89,19 @@
                          ["1""SN" ["1554-5" "GLUCOSE" "POST 12H CFST:MCNC:PT:SER/PLAS:QN"] nil [nil "182"] "mg/dl" "70_105" "H" nil nil "F"]]]
           {:protocol :mllp}))))
 
-(deftest mllp
+(deftest mllp-roundtrip
   (let [msg-1 (sut/read-str (slurp "samples/sample-v2.3-adt-a01-1.hl7"))
         msg-2 (sut/read-str (slurp "samples/sample-v2.3-oru-r01-1.hl7"))]
-    (with-open [pr (PipedReader.) pw (PipedWriter. pr)]
+    (with-open [pi (PipedInputStream.)
+                po (PipedOutputStream. pi)]
       (future
-        (with-open [writer (BufferedWriter. pw)]
+        (with-open [osw (OutputStreamWriter. po)
+                    writer (BufferedWriter. osw)]
           (sut/write writer msg-1 {:protocol :mllp})
           (sut/write writer msg-2 {:protocol :mllp})))
 
-      (with-open [reader (PushbackReader. pr)]
+      (with-open [isr (InputStreamReader. pi)
+                  bw (BufferedReader. isr)
+                  reader (PushbackReader. bw)]
         (is (= msg-1 (sut/read reader)))
         (is (= msg-2 (sut/read reader)))))))
