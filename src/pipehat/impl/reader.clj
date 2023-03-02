@@ -8,7 +8,9 @@
   [s]
   (-> s StringReader. PushbackReader.))
 
-(defn read-newline-escape-sequence
+(defn read-line-break-escape-sequence
+  "Given a reader, read an escape sequence representing a line break (one of
+  \\br.\\, \\X0A.\\, or \\X0D.\\)."
   [^PushbackReader reader]
   (let [n1 (.read reader)]
     (if (#{EOS EB} n1)
@@ -25,10 +27,11 @@
                 {:chs [(char n1) (char n2)]}))))))))
 
 (comment
-  (read-newline-escape-sequence (<< "0A\\"))
+  (read-line-break-escape-sequence (<< "0A\\"))
   ,,,)
 
 (defn read-escape-sequence
+  "Given a map of encoding characters and a reader, read an escape sequence."
   [{:keys [field-separator
            repetition-separator
            component-separator
@@ -47,7 +50,7 @@
                   83 component-separator ;; S
                   84 sub-component-separator ;; T
                   69 escape-character ;; E
-                  (88 46) (read-newline-escape-sequence reader) ;; X
+                  (88 46) (read-line-break-escape-sequence reader) ;; X
                   (throw (ex-info (format "Invalid escape sequence: \"%s\"" (char n)) {:char (char n)})))
             terminator (.read reader)]
 
@@ -61,6 +64,7 @@
   ,,,)
 
 (defn read-string
+  "Given a map of encoding characters and a reader, read a string."
   [{:keys [field-separator repetition-separator component-separator sub-component-separator escape-character]
     :as encoding-characters}
    ^PushbackReader reader]
@@ -101,6 +105,7 @@
   ,,,)
 
 (defn read-repetition
+  "Given a map of encoding characters and a reader, read a repetition element."
   [{:keys [field-separator repetition-separator component-separator sub-component-separator]
     :as encoding-characters}
    ^PushbackReader reader]
@@ -118,6 +123,7 @@
           (recur (conj xs (read-string encoding-characters reader))))))))
 
 (defn read-sub-component
+  "Given a map of encoding characters and a reader, read a sub-component."
   [{:keys [field-separator repetition-separator component-separator sub-component-separator]
     :as encoding-characters}
    ^PushbackReader reader]
@@ -138,6 +144,7 @@
           (recur (conj xs (read-string encoding-characters reader))))))))
 
 (defn read-component
+  "Given a map of encoding characters and a reader, read a component."
   [{:keys [field-separator repetition-separator component-separator sub-component-separator]
     :as encoding-characters}
    ^PushbackReader reader]
@@ -169,6 +176,7 @@
   ,,,)
 
 (defn read-field
+  "Given a map of encoding characters and a reader, read a field."
   [{:keys [field-separator]
     :as encoding-characters}
    ^PushbackReader reader]
@@ -188,6 +196,8 @@
   ,,,)
 
 (defn read-fields
+  "Given a map of encoding characters and a reader, read all fields until a
+  terminator (EB, EOS, or CR)."
   [encoding-characters ^PushbackReader reader]
   (loop [xs []]
     (let [n (.read reader)]
@@ -201,6 +211,7 @@
         (recur (conj xs (read-field encoding-characters reader)))))))
 
 (defn read-segment-identifier
+  "Given a reader, read a segment identifier."
   [^PushbackReader reader]
   (let [sb (StringBuilder.)]
     (loop []
@@ -220,7 +231,8 @@
   ,,,)
 
 (defn read-segments
-  "Given a map of encoding characters and a reader, read all message segments in the reader."
+  "Given a map of encoding characters and a reader, read all message segments in
+  the reader."
   [encoding-characters ^PushbackReader reader]
   (loop [xs []]
     (let [n (.read reader)]
@@ -243,6 +255,7 @@
   ,,,)
 
 (defn read-encoding-character
+  "Given a reader, read an encoding character defined in the MSH.2 HL7 field."
   [^PushbackReader reader]
   (let [n (.read reader)]
     (if (#{EOS EB} n)
@@ -250,6 +263,8 @@
       n)))
 
 (defn read-header-segment-identifier
+  "Given a map of encoding characters and a reader, read a message header
+  segment (MSH) identifier."
   [^PushbackReader reader]
   (let [sb (StringBuilder.)]
     (loop []
