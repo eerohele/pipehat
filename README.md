@@ -1,6 +1,6 @@
 # Pipehat
 
-Pipehat (`|^`) is a zero-dependency Clojure library for reading and writing [HL7 version 2](https://www.hl7.org/implement/standards/product_brief.cfm?product_id=185) messages encoded using the vertical bar ("pipehat") encoding.
+Pipehat (`|^`) is a zero-dependency Clojure library for reading and writing [HL7 version 2](https://www.hl7.org/implement/standards/product_brief.cfm?product_id=185) messages encoded using vertical bar ("pipehat") encoding.
 
 > **Warning**
 > Pipehat is not stable enough for public consumption.
