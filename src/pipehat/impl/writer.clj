@@ -1,10 +1,7 @@
 (ns pipehat.impl.writer
-  (:require [pipehat.impl.const :refer [SB EB CR]])
+  (:require [pipehat.impl.const :refer [SB EB CR]]
+            [pipehat.impl.util :refer [hl7-type]])
   (:import (java.io BufferedWriter)))
-
-(defn ^:private hl7-type
-  [x]
-  (-> x meta :hl7/type))
 
 (defn ^:private escaping-write
   [escape-character ^BufferedWriter writer ^String s]

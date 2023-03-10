@@ -2,6 +2,7 @@
   "Read and write vertical bar encoded HL7 messages (v2.x)."
   (:refer-clojure :exclude [read])
   (:require [pipehat.impl.reader :as reader]
+            [pipehat.impl.shaper :as shaper]
             [pipehat.impl.writer :as writer])
   (:import (java.io BufferedWriter PushbackReader StringReader StringWriter)))
 
@@ -36,6 +37,17 @@
 
   (read-str (slurp "samples/sample-v2.5.1-oru-r01-1.hl7"))
   ,,,)
+
+(defn ^:experimental shape
+  "Given a HL7 message parsed by read, shape it into a map queryable with
+  Clojure core functions.
+
+  A shaped message is not guaranteed to be round-trippable back into a vertical
+  bar encoded message.
+
+  Experimental; subject to change."
+  [message]
+  (shaper/shape message))
 
 (defn write
   "Given a java.io.BufferedWriter and a vector representing a HL7 message

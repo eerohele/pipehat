@@ -189,7 +189,7 @@
       (do (.unread reader n) (unwrap1 xs))
 
       :else
-      (recur (conj xs (read-component encoding-characters reader)) (.read reader)))))
+      (recur (with-meta (conj xs (read-component encoding-characters reader)) {:hl7/type :component}) (.read reader)))))
 
 (comment
   (read-field default-encoding-characters (<< "^"))
