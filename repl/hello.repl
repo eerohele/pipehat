@@ -1,4 +1,4 @@
-(require '[pipehat.api :as pipehat])
+(require '[pipehat.api :as hl7])
 
 ;; Round-trip
 (def input
@@ -8,10 +8,10 @@
     "OBR|1|845439^GHH OE|1045813^GHH LAB|1554-5^GLUCOSE|||200202150730||||||||555-55-5555~555-66-6666-666^PRIMARY^PATRICIA P^^^^MD^^LEVEL SEVEN HEALTHCARE, INC.|||||||||F||||||444-44-4444^HIPPOCRATES^HOWARD H^^^^MD\r"
     "OBX|1|SN|1554-5^GLUCOSE^POST 12H CFST:MCNC:PT:SER/PLAS:QN||^182|mg/dl|70_105|H|||F\r"))
 
-(pipehat/read-str input)
+(hl7/read-str input)
 (tap> *1)
 
-(pipehat/write-str *2)
+(hl7/write-str *2)
 (assert (= input *1))
 
 ;; Read from file
@@ -20,6 +20,13 @@
 (import '(java.io PushbackReader))
 
 (with-open [reader (PushbackReader. (io/reader "samples/sample-v2.4-oru-r01-2.hl7"))]
-  (pipehat/read reader))
+  (hl7/read reader))
+
+;; Shape
+
+(with-open [reader (PushbackReader. (io/reader "samples/sample-v2.5.1-oru-r01-1.hl7"))]
+  (hl7/shape (hl7/read reader)))
+
+(get-in *1 [:PID 0 [:PID 3] [:PID 3 6] [:PID 3 6 3]])
 
 ;; TODO: MLLP
