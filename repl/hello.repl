@@ -15,7 +15,6 @@
 (assert (= input *1))
 
 ;; Read from file
-
 (require '[clojure.java.io :as io])
 (import '(java.io PushbackReader))
 
@@ -23,7 +22,6 @@
   (hl7/read reader))
 
 ;; Shape
-
 (with-open [reader (PushbackReader. (io/reader "samples/sample-v2.5.1-oru-r01-1.hl7"))]
   (hl7/shape (hl7/read reader)))
 
