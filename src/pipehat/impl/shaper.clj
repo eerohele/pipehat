@@ -1,5 +1,12 @@
 (ns pipehat.impl.shaper
-  (:require [pipehat.impl.util :refer [hl7-type]]))
+  (:require [clojure.string :as string]
+            [pipehat.impl.util :refer [hl7-type]]))
+
+(defn ^:private not-blank
+  [x]
+  (if (string? x)
+    (-> x string/trim not-empty)
+    (not-empty x)))
 
 (defn ^:private shape-sub-components
   [id field-index component-index x]
@@ -8,7 +15,7 @@
     (into (sorted-map)
       (keep-indexed
         (fn [index item]
-          (when (seq item)
+          (when-some [item (not-blank item)]
             [[id field-index component-index (inc index)] item]))
         x))
 
@@ -21,7 +28,7 @@
     (into (sorted-map)
       (keep-indexed
         (fn [index item]
-          (when (seq item)
+          (when-some [item (not-blank item)]
             [[id field-index (inc index)] (shape-sub-components id field-index (inc index) item)]))
         x))
 
@@ -30,7 +37,7 @@
     (into (sorted-map)
       (keep-indexed
         (fn [index item]
-          (when (seq item)
+          (when-some [item (not-blank item)]
             [[id field-index 1 (inc index)] item]))
         x))
 
@@ -41,7 +48,7 @@
   (into (sorted-map)
     (keep-indexed
       (fn [index item]
-        (when (seq item)
+        (when-some [item (not-blank item)]
           [[id (inc index)] (shape-components id (inc index) item)]))
       fields)))
 
