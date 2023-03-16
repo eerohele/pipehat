@@ -30,7 +30,7 @@
 (spec/def ::field
   (spec/or :string ::non-empty-string :component ::component))
 
-(defmacro ^:private catvec
+(defmacro catvec
   "Like clojure.spec.alpha/cat, but expects and generates a vectors."
   [& args]
   `(let [spec# (spec/cat ~@args)]

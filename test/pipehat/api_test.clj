@@ -1,10 +1,14 @@
 (ns pipehat.api-test
   (:refer-clojure :exclude [read-string read])
   (:require [clojure.java.io :as io]
+            [clojure.spec.alpha :as spec]
             [clojure.test :refer [are deftest is]]
+            [clojure.test.check.properties :as prop]
+            [clojure.test.check.clojure-test :refer [defspec]]
             [pipehat.api :as sut]
             [pipehat.impl.const :refer [SB EB CR]]
-            [pipehat.impl.reader :refer [<<]])
+            [pipehat.impl.reader :refer [<<]]
+            [pipehat.specs :as specs])
   (:import (clojure.lang ExceptionInfo)
            (java.io BufferedReader BufferedWriter InputStreamReader OutputStreamWriter PipedInputStream PipedOutputStream PushbackReader)))
 
@@ -259,3 +263,31 @@
               [:ROL 4] {[:ROL 4 1] "0148" [:ROL 4 2] "ADDISON,JAMES"}}]}
 
           (sut/shape (sut/read reader))))))
+
+(spec/def ::identifier
+  (specs/catvec :identifier ::specs/segment-identifier :indices (spec/+ pos-int?)))
+
+(spec/def ::repetition
+  (spec/coll-of ::specs/non-empty-string :kind vector? :gen-max 2))
+
+(spec/def ::element
+  (spec/map-of ::identifier
+    (spec/or
+      :string ::specs/non-empty-string
+      :repetition ::repetition
+      :sub-component (spec/map-of ::identifier
+                       (spec/or
+                         :string ::specs/non-empty-string
+                         :repetition ::repetition
+                         :sub-component ::element)
+                       :gen-max 2))
+    :gen-max 3))
+
+(spec/def ::shaped
+  (spec/map-of
+    ::specs/segment-identifier
+    (spec/coll-of ::element :kind vector? :gen-max 3)))
+
+(defspec shaping-gen 25
+  (prop/for-all [message (spec/gen ::specs/message)]
+    (spec/valid? ::shaped (-> message sut/write-str sut/read-str sut/shape))))
