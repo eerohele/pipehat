@@ -43,8 +43,7 @@
   Given a HL7 message parsed by read, shape it into a map compatible with
   Clojure core functions.
 
-  A shaped message is not guaranteed to be round-trippable back into a vertical
-  bar encoded message."
+  You CAN NOT write a shaped message back into a HL7 string."
   [message]
   (shaper/shape message))
 
