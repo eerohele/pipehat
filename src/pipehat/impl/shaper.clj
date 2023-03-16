@@ -16,8 +16,8 @@
       (keep-indexed
         (fn [index item]
           (when-some [item (not-blank item)]
-            [[id field-index component-index (inc index)] item]))
-        x))
+            [[id field-index component-index (inc index)] item])))
+      x)
 
     x))
 
@@ -29,8 +29,8 @@
       (keep-indexed
         (fn [index item]
           (when-some [item (not-blank item)]
-            [[id field-index (inc index)] (shape-sub-components id field-index (inc index) item)]))
-        x))
+            [[id field-index (inc index)] (shape-sub-components id field-index (inc index) item)])))
+      x)
 
     ;; The first component of the field has sub-components.
     :sub-component
@@ -38,8 +38,8 @@
       (keep-indexed
         (fn [index item]
           (when-some [item (not-blank item)]
-            [[id field-index 1 (inc index)] item]))
-        x))
+            [[id field-index 1 (inc index)] item])))
+      x)
 
     x))
 
@@ -49,8 +49,8 @@
     (keep-indexed
       (fn [index item]
         (when-some [item (not-blank item)]
-          [[id (inc index)] (shape-components id (inc index) item)]))
-      fields)))
+          [[id (inc index)] (shape-components id (inc index) item)])))
+    fields))
 
 (defn shape
   [message]
