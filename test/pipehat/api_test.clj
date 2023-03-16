@@ -2,6 +2,7 @@
   (:refer-clojure :exclude [read-string read])
   (:require [clojure.java.io :as io]
             [clojure.spec.alpha :as spec]
+            [clojure.string :as string]
             [clojure.test :refer [are deftest is]]
             [clojure.test.check.properties :as prop]
             [clojure.test.check.clojure-test :refer [defspec]]
@@ -263,6 +264,24 @@
               [:ROL 4] {[:ROL 4 1] "0148" [:ROL 4 2] "ADDISON,JAMES"}}]}
 
           (sut/shape (sut/read reader))))))
+
+(defn sample-files
+  []
+  (filter #(string/ends-with? (.getName %) ".hl7") (.listFiles (io/file "samples"))))
+
+(deftest samples
+  (doseq [file (sample-files)]
+    (let [input (slurp (io/reader file))]
+      (is (= input (sut/write-str (sut/read-str input)))))))
+
+(defspec roundtrip 25
+  (prop/for-all [message (spec/gen ::specs/message)]
+    (= message (sut/read-str (sut/write-str message)))))
+
+(comment
+  (-> [[:MSH ["
+" ""]]] sut/write-str sut/read-str)
+  ,,,)
 
 (spec/def ::identifier
   (specs/catvec :identifier ::specs/segment-identifier :indices (spec/+ pos-int?)))
