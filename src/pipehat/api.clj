@@ -25,7 +25,6 @@
   result."
   [s]
   (expect String s)
-
   (with-open [reader (-> s StringReader. PushbackReader.)]
     (read reader)))
 
