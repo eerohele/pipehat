@@ -39,13 +39,13 @@
   ,,,)
 
 (defn ^:experimental shape
-  "Given a HL7 message parsed by read, shape it into a map queryable with
+  "EXPERIMENTAL; subject to change.
+
+  Given a HL7 message parsed by read, shape it into a map compatible with
   Clojure core functions.
 
   A shaped message is not guaranteed to be round-trippable back into a vertical
-  bar encoded message.
-
-  Experimental; subject to change."
+  bar encoded message."
   [message]
   (shaper/shape message))
 
