@@ -279,8 +279,7 @@
     (= message (sut/read-str (sut/write-str message)))))
 
 (comment
-  (-> [[:MSH ["
-" ""]]] sut/write-str sut/read-str)
+  (-> [[:MSH [""]]] sut/write-str sut/read-str)
   ,,,)
 
 (spec/def ::identifier
