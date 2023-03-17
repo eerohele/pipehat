@@ -137,7 +137,8 @@
         (do (.unread reader n) (unwrap1 xs))
 
         (= repetition-separator n)
-        (recur (with-meta (conj xs (read-repetition encoding-characters reader)) {:hl7/type :repetition}))
+        (let [repetition (read-repetition encoding-characters reader)]
+          (recur (with-meta (conj xs repetition) {:hl7/type :repetition})))
 
         :else
         (do (.unread reader n)
@@ -157,14 +158,16 @@
       (do (.unread reader n) (unwrap1 xs))
 
       (= repetition-separator n)
-      (recur
-        (with-meta (conj xs (read-repetition encoding-characters reader)) {:hl7/type :repetition})
-        (.read reader))
+      (let [repetition (read-repetition encoding-characters reader)]
+        (recur
+          (with-meta (conj xs repetition) {:hl7/type :repetition})
+          (.read reader)))
 
       (= sub-component-separator n)
-      (recur
-        (with-meta (conj xs (read-sub-component encoding-characters reader)) {:hl7/type :sub-component})
-        (.read reader))
+      (let [sub-component (read-sub-component encoding-characters reader)]
+        (recur
+          (with-meta (conj xs sub-component) {:hl7/type :sub-component})
+          (.read reader)))
 
       :else
       (recur
@@ -189,7 +192,8 @@
       (do (.unread reader n) (unwrap1 xs))
 
       :else
-      (recur (with-meta (conj xs (read-component encoding-characters reader)) {:hl7/type :component}) (.read reader)))))
+      (let [component (read-component encoding-characters reader)]
+        (recur (with-meta (conj xs component) {:hl7/type :component}) (.read reader))))))
 
 (comment
   (read-field default-encoding-characters (<< "^"))
