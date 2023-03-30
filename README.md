@@ -26,8 +26,14 @@ user=> (pipehat/read-str input)
 ;;    ...]
 
 ;; Round-tripping
-user=> (assert (= (pipehat/write-str (pipehat/read-str input))))
+user=> (assert (= input (-> input pipehat/read-str pipehat/write-str)))
 ;;=> true
+
+;; Shaping the message into a more palatable format (experimental)
+(-> input pipehat/read-str pipehat/shape)
+;;=> {:MSH [{[:MSH 1] "|", [:MSH 2] "^~\\&", ...}],
+;;    :PID [{[:PID 3] "555-44-4444", [:PID 5] {#, #, ...}, ...}],
+;;    ...}
 ```
 
 For more examples, see [`hello.repl`](https://github.com/eerohele/pipehat/blob/main/repl/hello.repl).
