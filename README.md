@@ -5,6 +5,12 @@ Pipehat (`|^`) is a zero-dependency Clojure library for reading and writing [HL7
 > **Warning**
 > Pipehat is not ready for public consumption.
 
+## Features
+
+- Read, write, and round-trip HL7 v2 messages
+- MLLP support (see [`hello.repl`](https://github.com/eerohele/pipehat/blob/main/repl/hello.repl) for an example)
+- Shape read messages into maps for easier (and indexed) access to message data
+
 ## Example
 
 ```clojure
@@ -37,3 +43,7 @@ user=> (-> input pipehat/read-str pipehat/shape)
 ```
 
 For more examples, see [`hello.repl`](https://github.com/eerohele/pipehat/blob/main/repl/hello.repl).
+
+## Prior art
+
+- [Clojure HL7 Version 2.x Message Parser](https://github.com/cmiles74/clojure-hl7-messaging-2-parser)
