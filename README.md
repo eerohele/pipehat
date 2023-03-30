@@ -30,7 +30,7 @@ user=> (assert (= input (-> input pipehat/read-str pipehat/write-str)))
 ;;=> true
 
 ;; Shaping the message into a more palatable format (experimental)
-(-> input pipehat/read-str pipehat/shape)
+user=> (-> input pipehat/read-str pipehat/shape)
 ;;=> {:MSH [{[:MSH 1] "|", [:MSH 2] "^~\\&", ...}],
 ;;    :PID [{[:PID 3] "555-44-4444", [:PID 5] {#, #, ...}, ...}],
 ;;    ...}
