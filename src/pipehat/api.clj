@@ -62,8 +62,8 @@
   Options:
 
     :protocol
-      Iff :mllp, wrap message with MLLP start block (0x0B) and end block (0x1C)
-      characters."
+      Iff :mllp, wrap message with MLLP start-of-block (0x0B) and end-of-block
+      (0x1C) characters."
   ([writer message]
    (write writer message {:protocol :none}))
   ([writer message options]
