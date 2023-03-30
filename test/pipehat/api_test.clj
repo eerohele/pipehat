@@ -31,9 +31,18 @@
      [:OBR
       ["1" ["845439" "GHH OE"] ["1045813" "GHH LAB"] ["1554-5" "GLUCOSE"] nil nil "200202150730" nil nil nil nil nil nil nil [#_repetition ["555-55-5555" "555-66-6666-666"] "PRIMARY" "PATRICIA P" nil nil nil "MD" nil "LEVEL SEVEN HEALTHCARE, INC."] nil nil nil nil nil nil nil nil "F" nil nil nil nil nil ["444-44-4444" "HIPPOCRATES" "HOWARD H" nil nil nil "MD"]]]
      [:OBX
-      ["1""SN" ["1554-5" "GLUCOSE" "POST 12H CFST:MCNC:PT:SER/PLAS:QN"] nil [nil "182"] "mg/dl" "70_105" "H" nil nil "F"]]]
+      ["1""SN" ["1554-5" "GLUCOSE" "POST 12H CFST:MCNC:PT:SER/PLAS:QN"] nil [nil "182"] "mg/dl" "70_105" "H" nil nil "F"]]])
 
-    ;; MLLP
+  (is (thrown-with-msg? ExceptionInfo #"EOF while reading segment identifier" (sut/read (<< "M"))))
+  (is (thrown-with-msg? ExceptionInfo #"EOF while reading segment identifier" (sut/read (<< "MS"))))
+  (is (thrown-with-msg? ExceptionInfo #"EOF while reading encoding characters" (sut/read (<< "MSH"))))
+  (is (thrown-with-msg? ExceptionInfo #"EOF while reading encoding characters" (sut/read (<< "MSH|"))))
+  (is (thrown-with-msg? ExceptionInfo #"EOF while reading segment identifier" (sut/read (<< ""))))
+  (is (thrown-with-msg? ExceptionInfo #"Unexpected MLLP start-of-block character while reading header segment identifier" (sut/read (<< (str (char SB) "M"))))))
+
+(deftest read-mllp
+  (are [in out] (= out (sut/read (<< in) {:protocol :mllp}))
+    ;; Basic example
     (str
       (char SB)
       "MSH|^~\\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4\r"
@@ -49,13 +58,11 @@
      [:OBR
       ["1" ["845439" "GHH OE"] ["1045813" "GHH LAB"] ["1554-5" "GLUCOSE"] nil nil "200202150730" nil nil nil nil nil nil nil [#_repetition ["555-55-5555" "555-66-6666-666"] "PRIMARY" "PATRICIA P" nil nil nil "MD" nil "LEVEL SEVEN HEALTHCARE, INC."] nil nil nil nil nil nil nil nil "F" nil nil nil nil nil ["444-44-4444" "HIPPOCRATES" "HOWARD H" nil nil nil "MD"]]]
      [:OBX
-      ["1""SN" ["1554-5" "GLUCOSE" "POST 12H CFST:MCNC:PT:SER/PLAS:QN"] nil [nil "182"] "mg/dl" "70_105" "H" nil nil "F"]]])
+      ["1""SN" ["1554-5" "GLUCOSE" "POST 12H CFST:MCNC:PT:SER/PLAS:QN"] nil [nil "182"] "mg/dl" "70_105" "H" nil nil "F"]]]
 
-  (is (thrown-with-msg? ExceptionInfo #"EOF while reading segment identifier" (sut/read (<< "M"))))
-  (is (thrown-with-msg? ExceptionInfo #"EOF while reading segment identifier" (sut/read (<< "MS"))))
-  (is (thrown-with-msg? ExceptionInfo #"EOF while reading encoding characters" (sut/read (<< "MSH"))))
-  (is (thrown-with-msg? ExceptionInfo #"EOF while reading encoding characters" (sut/read (<< "MSH|"))))
-  (is (thrown-with-msg? ExceptionInfo #"EOF while reading segment identifier" (sut/read (<< "")))))
+    ;; Discard characters preceding SB
+    (str "ABC"(char SB) "MSH|^~\\&\r"(char EB) (char CR))
+    [[:MSH ["|" "^~\\&"]]]))
 
 (deftest write
   ;; Basic example
@@ -109,8 +116,8 @@
       (with-open [isr (InputStreamReader. pi)
                   bw (BufferedReader. isr)
                   reader (PushbackReader. bw)]
-        (is (= msg-1 (sut/read reader)))
-        (is (= msg-2 (sut/read reader)))))))
+        (is (= msg-1 (sut/read reader {:protocol :mllp})))
+        (is (= msg-2 (sut/read reader {:protocol :mllp})))))))
 
 (deftest shaping
   (with-open [reader (PushbackReader. (io/reader "samples/sample-v2.4-oru-r01-1.hl7"))]

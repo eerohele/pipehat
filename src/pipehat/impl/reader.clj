@@ -278,9 +278,19 @@
             (throw (ex-info (format "Bad segment identifier \"%s\"; expected \"MSH\"." id) {:id id}))
             id))
         (let [n (.read reader)]
-          (if (#{EOS EB} n)
+          (cond
+            (#{EOS EB} n)
             (throw (ex-info "EOF while reading segment identifier" {:n n}))
-            (do (.append sb (char n)) (recur))))))))
+
+            (#{SB} n)
+            (throw
+              (ex-info (str
+                         "Unexpected MLLP start-of-block character"
+                         " while reading header segment identifier;"
+                         " use {:protocol :mllp} to enable MLLP mode.")
+                {:n n}))
+
+            :else (do (.append sb (char n)) (recur))))))))
 
 (defn read-header-segment
   "Given a java.io.PushbackReader, parse a HL7 message header segment (MSH).
@@ -316,9 +326,21 @@
 (defn read
   "Given a java.io.PushbackReader on a vertical bar encoded HL7 message, parse
   the message and return it."
-  [reader]
-  (let [n (.read reader)
-        ;; Maybe throw away MLLP start block character.
-        _ (when-not (= SB n) (.unread reader n))
-        {:keys [header-segment encoding-characters]} (read-header-segment reader)]
+  [reader {:keys [protocol]}]
+  (when (= :mllp protocol)
+    ;; Discard characters until the first MLLP start-of-block character or the
+    ;; end of stream.
+    (loop []
+      (let [n (.read reader)]
+        (cond
+          (= SB n) ::continue
+          (= EOS n) (throw (ex-info "EOF while reading until start-of-block character." {}))
+          :else (recur)))))
+
+  (let [{:keys [header-segment encoding-characters]} (read-header-segment reader)]
     (into [header-segment] (read-segments encoding-characters reader))))
+
+(comment
+  (read (<< (str (char SB) "MSH|^~\\&" (char EB) (char CR))) {})
+  (read (<< (str "X" (char SB) "MSH|^~\\&" (char EB) (char CR))) {:protocol :mllp})
+  ,,,)

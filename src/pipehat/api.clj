@@ -15,10 +15,18 @@
 
 (defn read
   "Given a java.io.PushbackReader, parse the HL7 message in the reader and
-  return the result."
-  [reader]
-  (expect PushbackReader reader)
-  (reader/read reader))
+  return the result.
+
+  Options:
+
+    :protocol
+      Iff :mllp, enable MLLP mode. In MLLP mode, the parser discards every
+      character preceding the MLLP start-of-block (0x0B) character."
+  ([reader]
+   (read reader {:protocol :none}))
+  ([reader options]
+   (expect PushbackReader reader)
+   (reader/read reader options)))
 
 (defn read-str
   "Given a string containing a HL7 message, parse the string and return the
