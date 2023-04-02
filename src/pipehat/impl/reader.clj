@@ -334,7 +334,7 @@
       (let [n (.read reader)]
         (cond
           (= SB n) ::continue
-          (= EOS n) (throw (ex-info "EOF while reading until start-of-block character." {}))
+          (= EOS n) (throw (ex-info "EOF while reading" {}))
           :else (recur)))))
 
   (let [{:keys [header-segment encoding-characters]} (read-header-segment reader)]
