@@ -7,7 +7,7 @@
             [clojure.test.check.properties :as prop]
             [clojure.test.check.clojure-test :refer [defspec]]
             [pipehat.api :as sut]
-            [pipehat.impl.const :refer [SB EB CR ACK NAK]]
+            [pipehat.const :refer [SB EB CR ACK NAK]]
             [pipehat.impl.reader :refer [<<]]
             [pipehat.specs :as specs])
   (:import (clojure.lang ExceptionInfo)

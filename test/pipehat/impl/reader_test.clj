@@ -2,11 +2,11 @@
   (:refer-clojure :exclude [read-string read])
   (:require [clojure.test :refer [are deftest is]]
             [pipehat.impl.reader :as sut :refer [<<]]
-            [pipehat.impl.const :refer [default-encoding-characters]])
+            [pipehat.impl.defaults :refer [encoding-characters]])
   (:import (clojure.lang ExceptionInfo)))
 
 (deftest read-escape-sequence
-  (letfn [(parse [in] (sut/read-string default-encoding-characters (<< in)))]
+  (letfn [(parse [in] (sut/read-string encoding-characters (<< in)))]
     (are [in out] (= out (parse in))
       "\\F\\" "|"
       "\\R\\" "~"
@@ -25,7 +25,7 @@
     (is (thrown-with-msg? ExceptionInfo #"Expected escape character while reading escape sequence, got \"x\"" (parse "\\X0Dx")))))
 
 (deftest read-string
-  (letfn [(parse [in] (sut/read-string default-encoding-characters (<< in)))]
+  (letfn [(parse [in] (sut/read-string encoding-characters (<< in)))]
     (are [in out] (= out (parse in))
       "" nil
       "|" nil
@@ -41,7 +41,7 @@
       "A~B" "A")))
 
 (deftest read-component
-  (letfn [(parse [in] (sut/read-component default-encoding-characters (<< in)))]
+  (letfn [(parse [in] (sut/read-component encoding-characters (<< in)))]
     (are [in out] (= out (parse in))
       "" nil
       "|" nil
@@ -68,7 +68,7 @@
       "AA&BB~CC~DD&EE" ["AA" ["BB" "CC" "DD"] "EE"])))
 
 (deftest read-field
-  (letfn [(parse [in] (sut/read-field default-encoding-characters (<< in)))]
+  (letfn [(parse [in] (sut/read-field encoding-characters (<< in)))]
     (are [in out] (= out (parse in))
       "" nil
       "|" nil
@@ -103,7 +103,7 @@
     (is (thrown-with-msg? ExceptionInfo #"Bad segment identifier \"ABC\"; expected \"MSH\"." (parse "ABC|^~\\&")))))
 
 (deftest read-segments
-  (letfn [(parse [in] (sut/read-segments default-encoding-characters (<< in)))]
+  (letfn [(parse [in] (sut/read-segments encoding-characters (<< in)))]
     (are [in out] (= out (parse in))
       "ABC|A" [[:ABC ["A"]]]
       "ABC|A|B" [[:ABC ["A" "B"]]]

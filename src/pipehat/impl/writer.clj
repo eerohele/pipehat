@@ -1,5 +1,5 @@
 (ns pipehat.impl.writer
-  (:require [pipehat.impl.const :refer [SB EB CR]]
+  (:require [pipehat.const :refer [SB EB CR]]
             [pipehat.impl.util :refer [hl7-type]])
   (:import (java.io BufferedWriter)))
 

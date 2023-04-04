@@ -1,7 +1,7 @@
 (ns pipehat.api
   "Read and write vertical bar encoded HL7 messages (v2.x)."
   (:refer-clojure :exclude [read])
-  (:require [pipehat.impl.const :refer [SB ACK NAK EB CR]]
+  (:require [pipehat.const :refer [SB ACK NAK EB CR]]
             [pipehat.impl.reader :as reader]
             [pipehat.impl.shaper :as shaper]
             [pipehat.impl.writer :as writer])

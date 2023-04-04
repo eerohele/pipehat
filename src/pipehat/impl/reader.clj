@@ -1,7 +1,9 @@
 (ns pipehat.impl.reader
   (:refer-clojure :exclude [read read-string])
   (:require [clojure.string :as string]
-            [pipehat.impl.const :refer [default-encoding-characters CR SB EB EOS SOE ACK NAK]])
+            [pipehat.const :refer [CR SB EB ACK NAK]]
+            [pipehat.impl.defaults :refer [encoding-characters]]
+            [pipehat.impl.const :refer [EOS SOE]])
   (:import (java.io PushbackReader StringReader)))
 
 (defn <<
@@ -60,7 +62,7 @@
         ret))))
 
 (comment
-  (read-escape-sequence default-encoding-characters (<< "F\\"))
+  (read-escape-sequence encoding-characters (<< "F\\"))
   ,,,)
 
 (defn read-string
@@ -88,8 +90,8 @@
             (recur)))))))
 
 (comment
-  (read-string default-encoding-characters (<< "Parker \\T\\ Sons"))
-  (read-string default-encoding-characters (<< "A\r"))
+  (read-string encoding-characters (<< "Parker \\T\\ Sons"))
+  (read-string encoding-characters (<< "A\r"))
   ,,,)
 
 (defn unwrap1
@@ -175,7 +177,7 @@
         (.read reader)))))
 
 (comment
-  (read-component default-encoding-characters (<< "A"))
+  (read-component encoding-characters (<< "A"))
   ,,,)
 
 (defn read-field
@@ -196,7 +198,7 @@
         (recur (with-meta (conj xs component) {:hl7/type :component}) (.read reader))))))
 
 (comment
-  (read-field default-encoding-characters (<< "^"))
+  (read-field encoding-characters (<< "^"))
   ,,,)
 
 (defn read-fields
@@ -255,7 +257,7 @@
             (recur (conj xs [(keyword id) fields]))))))))
 
 (comment
-  (read-segments default-encoding-characters (<< "AL1|1||^ASPIRIN\rDG1|1||786.50^CHEST PAIN, UNSPECIFIED^I9|||A"))
+  (read-segments encoding-characters (<< "AL1|1||^ASPIRIN\rDG1|1||786.50^CHEST PAIN, UNSPECIFIED^I9|||A"))
   ,,,)
 
 (defn read-encoding-character

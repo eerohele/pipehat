@@ -2,7 +2,7 @@
   (:require [clojure.string :as string]
             [clojure.spec.alpha :as spec]
             [clojure.spec.gen.alpha :as gen]
-            [pipehat.impl.const :refer [SB EB CR]]
+            [pipehat.const :refer [SB EB CR]]
             [pipehat.impl.reader :refer [unwrap1]]))
 
 (spec/def ::segment-identifier
