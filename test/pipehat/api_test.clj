@@ -114,8 +114,8 @@
           (sut/write writer msg-2 {:protocol :mllp})))
 
       (with-open [isr (InputStreamReader. pi)
-                  bw (BufferedReader. isr)
-                  reader (PushbackReader. bw)]
+                  br (BufferedReader. isr)
+                  reader (PushbackReader. br)]
         (is (= msg-1 (sut/read reader {:protocol :mllp})))
         (is (= msg-2 (sut/read reader {:protocol :mllp})))))))
 
