@@ -7,11 +7,11 @@
             [clojure.test.check.properties :as prop]
             [clojure.test.check.clojure-test :refer [defspec]]
             [pipehat.api :as sut]
-            [pipehat.impl.const :refer [SB EB CR]]
+            [pipehat.impl.const :refer [SB EB CR ACK NAK]]
             [pipehat.impl.reader :refer [<<]]
             [pipehat.specs :as specs])
   (:import (clojure.lang ExceptionInfo)
-           (java.io BufferedReader BufferedWriter InputStreamReader OutputStreamWriter PipedInputStream PipedOutputStream PushbackReader)))
+           (java.io BufferedReader BufferedWriter InputStreamReader OutputStreamWriter PipedInputStream PipedOutputStream PushbackReader StringWriter)))
 
 (deftest read
   (are [in out] (= out (sut/read (<< in)))
@@ -316,3 +316,15 @@
 (defspec shaping-gen 25
   (prop/for-all [message (spec/gen ::specs/message)]
     (spec/valid? ::shaped (-> message sut/write-str sut/read-str sut/shape))))
+
+(deftest ack
+  (with-open [sw (StringWriter.)
+              bw (BufferedWriter. sw)]
+    (sut/ack bw)
+    (is (= (str (char SB) (char ACK) (char EB) (char CR)) (str sw)))))
+
+(deftest nak
+  (with-open [sw (StringWriter.)
+              bw (BufferedWriter. sw)]
+    (sut/nak bw)
+    (is (= (str (char SB) (char NAK) (char EB) (char CR)) (str sw)))))

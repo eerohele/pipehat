@@ -1,7 +1,8 @@
 (ns pipehat.api
   "Read and write vertical bar encoded HL7 messages (v2.x)."
   (:refer-clojure :exclude [read])
-  (:require [pipehat.impl.reader :as reader]
+  (:require [pipehat.impl.const :refer [SB ACK NAK EB CR]]
+            [pipehat.impl.reader :as reader]
             [pipehat.impl.shaper :as shaper]
             [pipehat.impl.writer :as writer])
   (:import (java.io BufferedWriter PushbackReader StringReader StringWriter)))
@@ -97,3 +98,25 @@
       (write bw (read reader) {:protocol :mllp})
       (str sw)))
   ,,,)
+
+(defn ack
+  "Given a java.io.BufferedWriter, write a Commit Acknowledgement Block (ACK)
+  into the writer and flush."
+  [^BufferedWriter writer]
+  (expect BufferedWriter writer)
+  (.write writer SB)
+  (.write writer ACK)
+  (.write writer EB)
+  (.write writer CR)
+  (.flush writer))
+
+(defn nak
+  "Given a java.io.BufferedWriter, write a Negative Commit Acknowledgement Block
+  (NAK) into the writer and flush."
+  [^BufferedWriter writer]
+  (expect BufferedWriter writer)
+  (.write writer SB)
+  (.write writer NAK)
+  (.write writer EB)
+  (.write writer CR)
+  (.flush writer))
