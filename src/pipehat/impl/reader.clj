@@ -1,7 +1,7 @@
 (ns pipehat.impl.reader
   (:refer-clojure :exclude [read read-string])
   (:require [clojure.string :as string]
-            [pipehat.impl.const :refer [default-encoding-characters CR SB EB EOS SOE]])
+            [pipehat.impl.const :refer [default-encoding-characters CR SB EB EOS SOE ACK NAK]])
   (:import (java.io PushbackReader StringReader)))
 
 (defn <<
@@ -323,24 +323,56 @@
   (read-header-segment (<< "MSH|^~\\&|MegaReg|XYZHospC|SuperOE|XYZImgCtr|20060529090131-0500||ADT^A01^ADT_A01|01052901|P|2.5"))
   ,,,)
 
-(defn read
-  "Given a java.io.PushbackReader on a vertical bar encoded HL7 message, parse
-  the message and return it."
-  [reader {:keys [protocol]}]
-  (when (= :mllp protocol)
-    ;; Discard characters until the first MLLP start-of-block character or the
-    ;; end of stream.
-    (loop []
-      (let [n (.read reader)]
-        (cond
-          (= SB n) ::continue
-          (= EOS n) (throw (ex-info "EOF while reading" {}))
-          :else (recur)))))
-
+(defn ^:private read-vertical-bar-message
+  [reader]
   (let [{:keys [header-segment encoding-characters]} (read-header-segment reader)]
     (into [header-segment] (read-segments encoding-characters reader))))
 
+(defn read
+  "Given a java.io.PushbackReader on a vertical bar encoded HL7 message, parse
+  the message and return it.
+
+  When in MLLP mode, returns a string when the message is an MLLP ACK/NAK
+  message, else a vector."
+  [reader {:keys [protocol]}]
+  (if (= :mllp protocol)
+    (let [n (.read reader)
+          sb (StringBuilder.)]
+      (loop [seen-sb false n n]
+        (cond
+          (= EOS n)
+          (throw (ex-info "EOF while reading" {}))
+
+          (= EB n)
+          (let [n (.read reader)]
+            (cond
+              (= EOS n)
+              (throw (ex-info "EOF while reading" {}))
+
+              (not= CR n)
+              (throw (ex-info "Unexpected character while reading end of block" {:n n}))))
+
+          (= SB n)
+          (recur true (.read reader))
+
+          (#{ACK NAK} n)
+          (do (.append sb (char n))
+            (recur seen-sb (.read reader)))
+
+          (not seen-sb)
+          (recur seen-sb (.read reader))
+
+          :else
+          (do (.unread reader n) sb)))
+      (if (pos? (.length sb))
+        (str sb)
+        (read-vertical-bar-message reader)))
+
+    (read-vertical-bar-message reader)))
+
 (comment
+  (read (<< (str (char SB) (char ACK) (char EB) (char CR))) {})
+  (read (<< (str (char SB) (char ACK) (char EB) (char CR))) {:protocol :mllp})
   (read (<< (str (char SB) "MSH|^~\\&" (char EB) (char CR))) {})
   (read (<< (str "X" (char SB) "MSH|^~\\&" (char EB) (char CR))) {:protocol :mllp})
   ,,,)

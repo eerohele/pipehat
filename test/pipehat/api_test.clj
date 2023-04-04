@@ -11,7 +11,7 @@
             [pipehat.impl.reader :refer [<<]]
             [pipehat.specs :as specs])
   (:import (clojure.lang ExceptionInfo)
-           (java.io BufferedReader BufferedWriter InputStreamReader OutputStreamWriter PipedInputStream PipedOutputStream PushbackReader StringWriter)))
+           (java.io BufferedReader BufferedWriter InputStreamReader OutputStreamWriter PipedInputStream PipedOutputStream PushbackReader StringReader StringWriter)))
 
 (deftest read
   (are [in out] (= out (sut/read (<< in)))
@@ -118,6 +118,26 @@
                   reader (PushbackReader. br)]
         (is (= msg-1 (sut/read reader {:protocol :mllp})))
         (is (= msg-2 (sut/read reader {:protocol :mllp})))))))
+
+(deftest mllp-ack
+  (with-open [sw (StringWriter.)
+              bw (BufferedWriter. sw)]
+    (sut/ack bw)
+
+    (with-open [sr (StringReader. (str sw))
+                br (BufferedReader. sr)
+                pr (PushbackReader. br)]
+      (is (= (str (char ACK)) (sut/read pr {:protocol :mllp}))))))
+
+(deftest mllp-nak
+  (with-open [sw (StringWriter.)
+              bw (BufferedWriter. sw)]
+    (sut/nak bw)
+
+    (with-open [sr (StringReader. (str sw))
+                br (BufferedReader. sr)
+                pr (PushbackReader. br)]
+      (is (= (str (char NAK)) (sut/read pr {:protocol :mllp}))))))
 
 (deftest shaping
   (with-open [reader (PushbackReader. (io/reader "samples/sample-v2.4-oru-r01-1.hl7"))]
