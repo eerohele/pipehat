@@ -40,6 +40,9 @@ user=> (-> input hl7/read-str hl7/shape)
 ;;=> {:MSH [{[:MSH 1] "|", [:MSH 2] "^~\\&", ...}],
 ;;    :PID [{[:PID 3] "555-44-4444", [:PID 5] {#, #, ...}, ...}],
 ;;    ...}
+
+user=> (get-in *1 [:OBX 0 [:OBX 3] [:OBX 3 3]])
+;;=> "POST 12H CFST:MCNC:PT:SER/PLAS:QN"
 ```
 
 For more examples, see [`hello.repl`](https://github.com/eerohele/pipehat/blob/main/repl/hello.repl).
