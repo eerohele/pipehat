@@ -8,7 +8,7 @@ Pipehat (`|^`) is a zero-dependency Clojure library for reading and writing [HL7
 ## Features
 
 - Read, write, and round-trip HL7 v2 messages
-- MLLP support (see [`hello.repl`](https://github.com/eerohele/pipehat/blob/main/repl/hello.repl) for an example)
+- [Minimum Lower Layer Protocol](http://www.hl7.org/implement/standards/product_brief.cfm?product_id=55) (MLLP) support (see [`hello.repl`](https://github.com/eerohele/pipehat/blob/main/repl/hello.repl) for an example)
 - Shape read messages into maps for easier (and indexed) access to message data
 
 ## Example
