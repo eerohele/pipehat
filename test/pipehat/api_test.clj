@@ -355,4 +355,4 @@
 
   (try (sut/read+string (StringReader. "MSH|^~\\"))
     (catch clojure.lang.ExceptionInfo ex
-      (= {:s "MSH|^~\\"} (ex-data ex)))))
+      (is (= {:s "MSH|^~\\"} (ex-data ex))))))
