@@ -62,7 +62,7 @@
     (with-open [socket (doto (.accept server) (.setSoTimeout 60000))
                 reader (-> socket .getInputStream InputStreamReader. BufferedReader. PushbackReader.)
                 writer (-> socket .getOutputStream OutputStreamWriter. BufferedWriter.)]
-      ;; Read a MLLP-framed HL7 off the socket.
+      ;; Read an MLLP-framed HL7 message off the socket.
       (let [msg (hl7/read reader {:protocol :mllp})]
         (swap! dialog conj {:from :client :to :server :msg msg})
         ;; Write an MLLP-framed ACK message into the socket.
