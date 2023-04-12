@@ -351,4 +351,8 @@
 
 (deftest read+string
   (is (= [[[:MSH ["|" "^~\\&"]]] "MSH|^~\\&"]
-        (sut/read+string (StringReader. "MSH|^~\\&")))))
+        (sut/read+string (StringReader. "MSH|^~\\&"))))
+
+  (try (sut/read+string (StringReader. "MSH|^~\\"))
+    (catch clojure.lang.ExceptionInfo ex
+      (= {:s "MSH|^~\\"} (ex-data ex)))))

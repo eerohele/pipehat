@@ -73,9 +73,12 @@
    (read+string reader {}))
   ([reader options]
    (with-open [reader (string-capturing-pushback-reader reader)]
-     (let [m (read reader options)
-           s (str reader)]
-       [m s]))))
+     (try
+       (let [m (read reader options)
+             s (str reader)]
+         [m s])
+       (catch Exception ex
+         (throw (ex-info (.getMessage ex) {:s (str reader)})))))))
 
 (comment (read+string (StringReader. "MSH|^~\\&")) ,,,)
 
