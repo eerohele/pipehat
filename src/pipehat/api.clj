@@ -1,11 +1,11 @@
 (ns pipehat.api
   "Read and write vertical bar encoded HL7 messages (v2.x)."
-  (:refer-clojure :exclude [read])
+  (:refer-clojure :exclude [read read+string])
   (:require [pipehat.const :refer [SB ACK NAK EB CR]]
             [pipehat.impl.reader :as reader]
             [pipehat.impl.shaper :as shaper]
             [pipehat.impl.writer :as writer])
-  (:import (java.io BufferedWriter PushbackReader StringReader StringWriter)))
+  (:import (java.io BufferedWriter PushbackReader Reader StringReader StringWriter)))
 
 (set! *warn-on-reflection* true)
 
@@ -45,6 +45,39 @@
 
   (read-str (slurp "samples/sample-v2.5.1-oru-r01-1.hl7"))
   ,,,)
+
+(defn ^:private string-capturing-pushback-reader
+  "Given a java.io.Reader, return a java.io.PushbackReader that captures the
+  characters it reads into a string.
+
+  To get the string, call .toString on the returned object."
+  ^Reader [reader]
+  (let [sb (StringBuilder.)]
+    (proxy [PushbackReader] [reader]
+      (read []
+        (let [^Reader this this ; Sidestep reflection warning.
+              n (proxy-super read)]
+          (when (pos? n) (.append sb (char n)))
+          n))
+
+      (toString []
+        (.toString sb)))))
+
+(defn read+string
+  "Given a java.io.Reader, parse the HL7 message in the reader and return a two-
+  element vector where the first element is the parsed message and the second
+  element is a string containing the message.
+
+  Same options as read."
+  ([reader]
+   (read+string reader {}))
+  ([reader options]
+   (with-open [reader (string-capturing-pushback-reader reader)]
+     (let [m (read reader options)
+           s (str reader)]
+       [m s]))))
+
+(comment (read+string (StringReader. "MSH|^~\\&")) ,,,)
 
 (defn ^:experimental shape
   "EXPERIMENTAL; subject to change.

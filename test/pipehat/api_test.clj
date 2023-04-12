@@ -1,5 +1,5 @@
 (ns pipehat.api-test
-  (:refer-clojure :exclude [read-string read])
+  (:refer-clojure :exclude [read-string read+string read])
   (:require [clojure.java.io :as io]
             [clojure.spec.alpha :as spec]
             [clojure.string :as string]
@@ -348,3 +348,7 @@
               bw (BufferedWriter. sw)]
     (sut/nak bw)
     (is (= (str (char SB) (char NAK) (char EB) (char CR)) (str sw)))))
+
+(deftest read+string
+  (is (= [[[:MSH ["|" "^~\\&"]]] "MSH|^~\\&"]
+        (sut/read+string (StringReader. "MSH|^~\\&")))))
