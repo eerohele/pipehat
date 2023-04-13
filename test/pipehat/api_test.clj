@@ -333,7 +333,7 @@
     ::specs/segment-identifier
     (spec/coll-of ::element :kind vector? :gen-max 3)))
 
-(defspec shaping-gen 25
+(defspec shaping-generative 25
   (prop/for-all [message (spec/gen ::specs/message)]
     (spec/valid? ::shaped (-> message sut/write-str sut/read-str sut/shape))))
 
