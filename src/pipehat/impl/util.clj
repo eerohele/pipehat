@@ -1,6 +1,6 @@
 (ns pipehat.impl.util)
 
-(defn hl7-type
-  "Given an IMeta, return its HL7 type."
+(defn element-type
+  "Given an IMeta, return its element type."
   [x]
-  (-> x meta :hl7/type))
+  (-> x meta :pipehat.api/element-type))

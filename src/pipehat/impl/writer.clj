@@ -1,6 +1,6 @@
 (ns pipehat.impl.writer
   (:require [pipehat.const :refer [SB EB CR]]
-            [pipehat.impl.util :refer [hl7-type]])
+            [pipehat.impl.util :refer [element-type]])
   (:import (java.io BufferedWriter)))
 
 (defn ^:private escaping-write
@@ -19,7 +19,7 @@
       (run! (fn [sub-component]
               (write-component encoding-characters writer sub-component)
 
-              (case (hl7-type component)
+              (case (element-type component)
                 :sub-component (.write writer ^int sub-component-separator)
                 :repetition (.write writer ^int repetition-separator)
                 (.write writer ^int component-separator)))

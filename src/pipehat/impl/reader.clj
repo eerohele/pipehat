@@ -140,7 +140,7 @@
 
         (= repetition-separator n)
         (let [repetition (read-repetition encoding-characters reader)]
-          (recur (with-meta (conj xs repetition) {:hl7/type :repetition})))
+          (recur (with-meta (conj xs repetition) {:pipehat.api/element-type :repetition})))
 
         :else
         (do (.unread reader n)
@@ -162,13 +162,13 @@
       (= repetition-separator n)
       (let [repetition (read-repetition encoding-characters reader)]
         (recur
-          (with-meta (conj xs repetition) {:hl7/type :repetition})
+          (with-meta (conj xs repetition) {:pipehat.api/element-type :repetition})
           (.read reader)))
 
       (= sub-component-separator n)
       (let [sub-component (read-sub-component encoding-characters reader)]
         (recur
-          (with-meta (conj xs sub-component) {:hl7/type :sub-component})
+          (with-meta (conj xs sub-component) {:pipehat.api/element-type :sub-component})
           (.read reader)))
 
       :else
@@ -195,7 +195,7 @@
 
       :else
       (let [component (read-component encoding-characters reader)]
-        (recur (with-meta (conj xs component) {:hl7/type :component}) (.read reader))))))
+        (recur (with-meta (conj xs component) {:pipehat.api/element-type :component}) (.read reader))))))
 
 (comment
   (read-field encoding-characters (<< "^"))

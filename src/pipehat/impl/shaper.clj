@@ -1,6 +1,6 @@
 (ns pipehat.impl.shaper
   (:require [clojure.string :as string]
-            [pipehat.impl.util :refer [hl7-type]]))
+            [pipehat.impl.util :refer [element-type]]))
 
 (defn ^:private not-blank
   [x]
@@ -10,7 +10,7 @@
 
 (defn ^:private shape-sub-components
   [id field-index component-index x]
-  (case (hl7-type x)
+  (case (element-type x)
     :sub-component
     (into (sorted-map)
       (keep-indexed
@@ -23,7 +23,7 @@
 
 (defn ^:private shape-components
   [id field-index x]
-  (case (hl7-type x)
+  (case (element-type x)
     :component
     (into (sorted-map)
       (keep-indexed
