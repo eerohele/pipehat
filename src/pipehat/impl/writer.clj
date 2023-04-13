@@ -68,8 +68,7 @@
   (run!
     (fn [segment]
       (write-segment encoding-characters writer segment)
-      (.write writer CR)
-      (.flush writer))
+      (.write writer CR))
     (butlast segments))
 
   (write-segment encoding-characters writer (last segments)))
@@ -104,7 +103,6 @@
       (write-components encoding-characters writer header-segment-tail))
 
     (.write writer CR)
-    (.flush writer)
 
     ;; Write other segments
     (write-segments encoding-characters writer (next message)))
