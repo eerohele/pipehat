@@ -1,5 +1,5 @@
 (ns pipehat.impl.writer
-  (:require [pipehat.const :refer [SB EB CR]]
+  (:require [pipehat.const :refer [SB EB FF CR]]
             [pipehat.impl.util :refer [element-type]])
   (:import (java.io BufferedWriter)))
 
@@ -34,8 +34,8 @@
               component-separator (escaping-write escape-character writer "S")
               sub-component-separator (escaping-write escape-character writer "T")
               escape-character (escaping-write escape-character writer "E")
-              12 (escaping-write escape-character writer "X0A")
-              13 (escaping-write escape-character writer "X0D")
+              FF (escaping-write escape-character writer "X0A")
+              CR (escaping-write escape-character writer "X0D")
               (.write writer (int ch))))
       component)))
 
