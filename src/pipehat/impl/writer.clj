@@ -16,27 +16,29 @@
    component]
   (if (vector? component)
     (do
-      (run! (fn [sub-component]
-              (write-component encoding-characters writer sub-component)
+      (run!
+        (fn [sub-component]
+          (write-component encoding-characters writer sub-component)
 
-              (case (element-type component)
-                :sub-component (.write writer ^int sub-component-separator)
-                :repetition (.write writer ^int repetition-separator)
-                (.write writer ^int component-separator)))
+          (case (element-type component)
+            :sub-component (.write writer ^int sub-component-separator)
+            :repetition (.write writer ^int repetition-separator)
+            (.write writer ^int component-separator)))
         (butlast component))
 
       (write-component encoding-characters writer (peek component)))
 
-    (run! (fn [ch]
-            (condp = (int ch)
-              field-separator (escaping-write escape-character writer "F")
-              repetition-separator (escaping-write escape-character writer "R")
-              component-separator (escaping-write escape-character writer "S")
-              sub-component-separator (escaping-write escape-character writer "T")
-              escape-character (escaping-write escape-character writer "E")
-              FF (escaping-write escape-character writer "X0A")
-              CR (escaping-write escape-character writer "X0D")
-              (.write writer (int ch))))
+    (run!
+      (fn [ch]
+        (condp = (int ch)
+          field-separator (escaping-write escape-character writer "F")
+          repetition-separator (escaping-write escape-character writer "R")
+          component-separator (escaping-write escape-character writer "S")
+          sub-component-separator (escaping-write escape-character writer "T")
+          escape-character (escaping-write escape-character writer "E")
+          FF (escaping-write escape-character writer "X0A")
+          CR (escaping-write escape-character writer "X0D")
+          (.write writer (int ch))))
       component)))
 
 (defn ^:private write-components
@@ -44,9 +46,10 @@
     :as encoding-characters}
    ^BufferedWriter writer
    components]
-  (run! (fn [component]
-          (write-component encoding-characters writer component)
-          (.write writer field-separator))
+  (run!
+    (fn [component]
+      (write-component encoding-characters writer component)
+      (.write writer field-separator))
     (butlast components))
   (write-component encoding-characters writer (last components)))
 
@@ -59,8 +62,9 @@
     (.write writer ^String (-> segment first name))
     (.write writer ^int field-separator)
 
-    (run! (fn [components]
-            (write-components encoding-characters writer components))
+    (run!
+      (fn [components]
+        (write-components encoding-characters writer components))
       (rest segment))))
 
 (defn ^:private write-segments
