@@ -74,6 +74,7 @@
   ([reader]
    (read+string reader {}))
   ([reader options]
+   (expect Reader reader)
    (let [reader (string-capturing-pushback-reader reader)]
      (try
        (let [m (read reader options)
