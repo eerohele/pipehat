@@ -8,10 +8,10 @@
     "OBR|1|845439^GHH OE|1045813^GHH LAB|1554-5^GLUCOSE|||200202150730||||||||555-55-5555~555-66-6666-666^PRIMARY^PATRICIA P^^^^MD^^LEVEL SEVEN HEALTHCARE, INC.|||||||||F||||||444-44-4444^HIPPOCRATES^HOWARD H^^^^MD\r"
     "OBX|1|SN|1554-5^GLUCOSE^POST 12H CFST:MCNC:PT:SER/PLAS:QN||^182|mg/dl|70_105|H|||F\r"))
 
-(hl7/read-str input)
+(hl7/read-string input)
 (tap> *1)
 
-(hl7/write-str *2)
+(hl7/write-string *2)
 (assert (= input *1))
 
 ;; Read from file

@@ -1,6 +1,6 @@
 (ns pipehat.api
   "Read and write vertical bar encoded HL7 messages (v2.x)."
-  (:refer-clojure :exclude [read read+string])
+  (:refer-clojure :exclude [read read-string read+string])
   (:require [pipehat.const :refer [SB ACK NAK EB CR]]
             [pipehat.impl.reader :as reader]
             [pipehat.impl.shaper :as shaper]
@@ -29,7 +29,7 @@
    (expect PushbackReader reader)
    (reader/read reader options)))
 
-(defn read-str
+(defn read-string
   "Given a string containing a HL7 message, parse the string and return the
   result."
   [s]
@@ -43,7 +43,7 @@
   (with-open [reader (-> "samples/sample-v2.5.1-oru-r01-1.hl7" java.io.FileReader. PushbackReader.)]
     (read reader))
 
-  (read-str (slurp "samples/sample-v2.5.1-oru-r01-1.hl7"))
+  (read-string (slurp "samples/sample-v2.5.1-oru-r01-1.hl7"))
   ,,,)
 
 (defn ^:private string-capturing-pushback-reader
@@ -113,11 +113,11 @@
   (write (java.io.StringWriter.) nil)
   ,,,)
 
-(defn write-str
+(defn write-string
   "Given a vector representing a HL7 message (presumably parsed by read), write
   the message into a string and return the string."
   ([message]
-   (write-str message {:protocol :none}))
+   (write-string message {:protocol :none}))
   ([message options]
    (with-open [sw (StringWriter.)
                bw (BufferedWriter. sw)]
@@ -126,7 +126,7 @@
 
 (comment
   (with-open [reader (PushbackReader. (java.io.FileReader. "samples/sample-v2.5.1-oru-r01-1.hl7"))]
-    (write-str (read reader)))
+    (write-string (read reader)))
 
   (with-open [reader (PushbackReader. (java.io.FileReader. "samples/sample-v2.4-oru-r01-2.hl7"))]
     (with-open [sw (StringWriter.)

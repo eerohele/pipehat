@@ -25,18 +25,18 @@ user=> (def input
            "OBX|1|SN|1554-5^GLUCOSE^POST 12H CFST:MCNC:PT:SER/PLAS:QN||^182|mg/dl|70_105|H|||F\r"))
 ;;=> #'user/input
 
-user=> (hl7/read-str input)
+user=> (hl7/read-string input)
 ;;=> [[:MSH ["|" "^~\\&" "GHH LAB" ...]]
 ;;    [:PID [nil nil "555-44-4444" ...]]
 ;;    [:OBR ["1" ["845439" "GHH OE"] ["1045813" "GHH LAB"] ...]]
 ;;    ...]
 
 ;; Round-tripping
-user=> (assert (= input (-> input hl7/read-str hl7/write-str)))
+user=> (assert (= input (-> input hl7/read-string hl7/write-string)))
 ;;=> true
 
 ;; Shaping the message into a more palatable format (experimental)
-user=> (-> input hl7/read-str hl7/shape)
+user=> (-> input hl7/read-string hl7/shape)
 ;;=> {:MSH [{[:MSH 1] "|", [:MSH 2] "^~\\&", ...}],
 ;;    :PID [{[:PID 3] "555-44-4444", [:PID 5] {#, #, ...}, ...}],
 ;;    ...}
