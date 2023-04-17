@@ -68,11 +68,13 @@
   element vector where the first element is the parsed message and the second
   element is a string containing the message.
 
-  Same options as read."
+  Same options as read.
+
+  Caller must close the reader, as with read."
   ([reader]
    (read+string reader {}))
   ([reader options]
-   (with-open [reader (string-capturing-pushback-reader reader)]
+   (let [reader (string-capturing-pushback-reader reader)]
      (try
        (let [m (read reader options)
              s (str reader)]
