@@ -85,15 +85,22 @@
 
 (comment (read+string (StringReader. "MSH|^~\\&")) ,,,)
 
-(defn ^:experimental shape
-  "EXPERIMENTAL; subject to change.
+(defn shape
+  "Given a HL7 message parsed by read, shape it into a map that's easy to reach
+  into with Clojure core functions. For example:
 
-  Given a HL7 message parsed by read, shape it into a map compatible with
-  Clojure core functions.
+    user=> (get-in (-> \"MSH|^~\\&|ACME\" read-string shape) [:MSH 0 [:MSH 3]])
+    ;;=> \"ACME\"
 
-  You CAN NOT write a shaped message back into a HL7 string."
+  Shaping is a lossy operation: you CAN NOT round-trip a shaped message back
+  into a HL7 string.
+
+  Shaping is therefore only useful if you need to extract data from a message.
+  It is not useful if you need to update a message."
   [message]
   (shaper/shape message))
+
+(comment (get-in (-> "MSH|^~\\&|ACME" read-string shape) [:MSH 0 [:MSH 3]]) ,,,)
 
 (defn write
   "Given a java.io.BufferedWriter and a vector representing a HL7 message
