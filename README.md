@@ -35,7 +35,7 @@ user=> (hl7/read-string input)
 user=> (assert (= input (-> input hl7/read-string hl7/write-string)))
 ;;=> true
 
-;; Shaping the message into a more palatable format (experimental)
+;; Shaping the message into a more palatable format
 user=> (-> input hl7/read-string hl7/shape)
 ;;=> {:MSH [{[:MSH 1] "|", [:MSH 2] "^~\\&", ...}],
 ;;    :PID [{[:PID 3] "555-44-4444", [:PID 5] {#, #, ...}, ...}],
