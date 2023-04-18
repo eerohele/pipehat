@@ -41,7 +41,7 @@ user=> (-> input hl7/read-string hl7/shape)
 ;;    :PID [{[:PID 3] "555-44-4444", [:PID 5] {#, #, ...}, ...}],
 ;;    ...}
 
-;; Get the value of OBX.3.3
+;; Get the value of OBX.3.3 from the shaped message
 user=> (get-in *1 [:OBX 0 [:OBX 3] [:OBX 3 3]])
 ;;=> "POST 12H CFST:MCNC:PT:SER/PLAS:QN"
 ```
