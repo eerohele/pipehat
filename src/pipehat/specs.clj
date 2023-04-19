@@ -6,9 +6,9 @@
             [pipehat.impl.reader :refer [unwrap1]]))
 
 (spec/def ::segment-identifier
-  (spec/with-gen (spec/and keyword? #(= 3 (count (name %))))
+  (spec/with-gen (spec/and string? #(= 3 (count (name %))))
     (fn []
-      (gen/fmap #(keyword (string/join (map string/upper-case %))) (gen/vector (gen/char-alpha) 3)))))
+      (gen/fmap #(string/join (map string/upper-case %)) (gen/vector (gen/char-alpha) 3)))))
 
 (spec/def ::non-empty-string
   (spec/and string? #(not= % "")))
@@ -58,7 +58,7 @@
 
 (def ^:private header-segment-gen
   (gen/tuple
-    (gen/return :MSH)
+    (gen/return "MSH")
     (gen/fmap (fn [[header segments]] (into header segments))
       (gen/tuple
         (gen/bind
@@ -75,7 +75,7 @@
 (spec/def ::header-segment
   (spec/with-gen
     (spec/tuple
-      #{:MSH}
+      #{"MSH"}
       (catvec
         :field-separator ::field-separator
         :encoding-characters ::encoding-characters

@@ -89,7 +89,9 @@
   "Given a HL7 message parsed by read, shape it into a map that's easy to reach
   into with Clojure core functions. For example:
 
-    user=> (get-in (-> \"MSH|^~\\&|ACME\" read-string shape) [:MSH 0 [:MSH 3]])
+    user=> (get-in
+             (-> \"MSH|^~\\&|ACME\" read-string shape)
+             [\"MSH\" 0 [\"MSH\" 3]])
     ;;=> \"ACME\"
 
   Shaping is a lossy operation: you CAN NOT round-trip a shaped message back
@@ -100,7 +102,7 @@
   [message]
   (shaper/shape message))
 
-(comment (get-in (-> "MSH|^~\\&|ACME" read-string shape) [:MSH 0 [:MSH 3]]) ,,,)
+(comment (get-in (-> "MSH|^~\\&|ACME" read-string shape) ["MSH" 0 ["MSH" 3]]) ,,,)
 
 (defn write
   "Given a java.io.BufferedWriter and a vector representing a HL7 message

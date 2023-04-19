@@ -96,7 +96,7 @@
         :repetition-separator 126
         :sub-component-separator 38}
 
-       :header-segment [:MSH ["|" "^~\\&"]]})
+       :header-segment ["MSH" ["|" "^~\\&"]]})
 
     (is (thrown-with-msg? ExceptionInfo #"EOF while reading segment identifier" (parse "A")))
     (is (thrown-with-msg? ExceptionInfo #"EOF while reading encoding characters" (parse "MSH|")))
@@ -105,19 +105,19 @@
 (deftest read-segments
   (letfn [(parse [in] (sut/read-segments encoding-characters (<< in)))]
     (are [in out] (= out (parse in))
-      "ABC|A" [[:ABC ["A"]]]
-      "ABC|A|B" [[:ABC ["A" "B"]]]
-      "ABC||B" [[:ABC [nil "B"]]]
-      "ABC|A^B" [[:ABC [["A" "B"]]]]
-      "ABC|^A" [[:ABC [[nil "A"]]]]
-      "ABC|A^B&C^D" [[:ABC [["A" ["B" "C"] "D"]]]]
-      "ABC|A&B" [[:ABC [["A" "B"]]]]
-      "ABC|&B" [[:ABC [[nil "B"]]]]
-      "ABC|A&" [[:ABC [["A" nil]]]]
-      "ABC|A~B" [[:ABC [["A" "B"]]]]
-      "ABC|~B" [[:ABC [[nil "B"]]]]
-      "ABC|A~" [[:ABC [["A" nil]]]]
-      "ABC|A^B&C^D" [[:ABC [["A" ["B" "C"] "D"]]]]
-      "ABC|A^B~C^D" [[:ABC [["A" ["B" "C"] "D"]]]])
+      "ABC|A" [["ABC" ["A"]]]
+      "ABC|A|B" [["ABC" ["A" "B"]]]
+      "ABC||B" [["ABC" [nil "B"]]]
+      "ABC|A^B" [["ABC" [["A" "B"]]]]
+      "ABC|^A" [["ABC" [[nil "A"]]]]
+      "ABC|A^B&C^D" [["ABC" [["A" ["B" "C"] "D"]]]]
+      "ABC|A&B" [["ABC" [["A" "B"]]]]
+      "ABC|&B" [["ABC" [[nil "B"]]]]
+      "ABC|A&" [["ABC" [["A" nil]]]]
+      "ABC|A~B" [["ABC" [["A" "B"]]]]
+      "ABC|~B" [["ABC" [[nil "B"]]]]
+      "ABC|A~" [["ABC" [["A" nil]]]]
+      "ABC|A^B&C^D" [["ABC" [["A" ["B" "C"] "D"]]]]
+      "ABC|A^B~C^D" [["ABC" [["A" ["B" "C"] "D"]]]])
 
     (is (thrown-with-msg? ExceptionInfo #"EOF while reading segment identifier" (parse "^")))))

@@ -26,9 +26,9 @@ user=> (def input
 ;;=> #'user/input
 
 user=> (hl7/read-string input)
-;;=> [[:MSH ["|" "^~\\&" "GHH LAB" ...]]
-;;    [:PID [nil nil "555-44-4444" ...]]
-;;    [:OBR ["1" ["845439" "GHH OE"] ["1045813" "GHH LAB"] ...]]
+;;=> [["MSH" ["|" "^~\\&" "GHH LAB" ...]]
+;;    ["PID" [nil nil "555-44-4444" ...]]
+;;    ["OBR" ["1" ["845439" "GHH OE"] ["1045813" "GHH LAB"] ...]]
 ;;    ...]
 
 ;; Round-tripping
@@ -37,12 +37,12 @@ user=> (assert (= input (-> input hl7/read-string hl7/write-string)))
 
 ;; Shaping the message into a more palatable format
 user=> (-> input hl7/read-string hl7/shape)
-;;=> {:MSH [{[:MSH 1] "|", [:MSH 2] "^~\\&", ...}],
-;;    :PID [{[:PID 3] "555-44-4444", [:PID 5] {#, #, ...}, ...}],
+;;=> {"MSH" [{["MSH" 1] "|", ["MSH" 2] "^~\\&", ...}],
+;;    "PID" [{["PID" 3] "555-44-4444", ["PID" 5] {#, #, ...}, ...}],
 ;;    ...}
 
 ;; Get the value of OBX.3.3 from the shaped message
-user=> (get-in *1 [:OBX 0 [:OBX 3] [:OBX 3 3]])
+user=> (get-in *1 ["OBX" 0 ["OBX" 3] ["OBX" 3 3]])
 ;;=> "POST 12H CFST:MCNC:PT:SER/PLAS:QN"
 ```
 

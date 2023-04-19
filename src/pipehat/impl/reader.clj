@@ -254,7 +254,7 @@
         (do (.unread reader n)
           (let [id (read-segment-identifier reader)
                 fields (read-fields encoding-characters reader)]
-            (recur (conj xs [(keyword id) fields]))))))))
+            (recur (conj xs [id fields]))))))))
 
 (comment
   (read-segments encoding-characters (<< "AL1|1||^ASPIRIN\rDG1|1||786.50^CHEST PAIN, UNSPECIFIED^I9|||A"))
@@ -316,7 +316,7 @@
 
      :header-segment
      (let [fields (read-fields encoding-characters reader)]
-       [(keyword id)
+       [id
         (into [(-> field-separator char str)
                (string/join (map char (vals (rest encoding-characters))))]
           fields)])}))

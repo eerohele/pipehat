@@ -25,7 +25,7 @@
 (with-open [reader (PushbackReader. (io/reader "samples/sample-v2.5.1-oru-r01-1.hl7"))]
   (hl7/shape (hl7/read reader)))
 
-(get-in *1 [:PID 0 [:PID 3] [:PID 3 6] [:PID 3 6 3]])
+(get-in *1 ["PID" 0 ["PID" 3] ["PID" 3 6] ["PID" 3 6 3]])
 
 (with-open [reader (PushbackReader. (io/reader "samples/sample-v2.4-oru-r01-1.hl7"))]
   (hl7/shape (hl7/read reader)))
@@ -53,8 +53,8 @@
   [msg]
   (let [trigger-event (-> msg (nth 0) (nth 1) (nth 8) (nth 1))
         message-control-id (-> msg (nth 0) (nth 1) (nth 9))]
-    [[:MSH ["|" "^~\\&" "SERVER" "ACME" "CLIENT" "ACME" (timestamp) nil ["ACK" trigger-event] message-control-id "P" "2.5"]]
-     [:MSA ["AA" message-control-id "OK"]]]))
+    [["MSH" ["|" "^~\\&" "SERVER" "ACME" "CLIENT" "ACME" (timestamp) nil ["ACK" trigger-event] message-control-id "P" "2.5"]]
+     ["MSA" ["AA" message-control-id "OK"]]]))
 
 (def server-fut
   (future
@@ -76,7 +76,7 @@
 ;; Create a HL7 message to send to the server.
 (defn make-msg
   []
-  [[:MSH ["|" "^~\\&" "CLIENT" "ACME" "SERVER" "ACME" (timestamp) nil ["SIU" "S14"] "85918" "P" "2.5"]]])
+  [["MSH" ["|" "^~\\&" "CLIENT" "ACME" "SERVER" "ACME" (timestamp) nil ["SIU" "S14"] "85918" "P" "2.5"]]])
 
 (with-open [writer (-> client .getOutputStream OutputStreamWriter. BufferedWriter.)]
   ;; Write the HL7 message into the socket.
