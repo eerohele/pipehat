@@ -10,15 +10,26 @@
   [s]
   (-> s StringReader. PushbackReader.))
 
+(defmacro =*
+  [& args]
+  (let [a# (last args)]
+    (list* 'or (map (fn [b#] (list '= a# b#)) (butlast args)))))
+
+(comment
+  (macroexpand-1 '(=* 1))
+  (macroexpand-1 '(=* 1 10))
+  (macroexpand-1 '(=* 1 2 3 10))
+  ,,,)
+
 (defn read-line-break-escape-sequence
   "Given a reader, read an escape sequence representing a line break (one of
   \\br.\\, \\X0A.\\, or \\X0D.\\)."
   [^PushbackReader reader]
   (let [n1 (.read reader)]
-    (if (#{EOS EB} n1)
+    (if (=* EOS EB n1)
       (throw (ex-info "EOF while reading escape sequence" {}))
       (let [n2 (.read reader)]
-        (if (#{EOS EB} n2)
+        (if (=* EOS EB n2)
           (throw (ex-info "EOF while reading escape sequence" {}))
           (condp = [n1 n2]
             [98 114] 13 ; \.br\ -> \return
@@ -42,7 +53,7 @@
    ^PushbackReader reader]
   (let [n (.read reader)]
     (cond
-      (#{EOS EB} n)
+      (=* EOS EB n)
       (throw (ex-info "EOF while reading escape sequence" {}))
 
       :else
@@ -77,7 +88,7 @@
           (= EOS n)
           (not-empty (.toString sb))
 
-          (#{EB CR field-separator component-separator sub-component-separator repetition-separator} n)
+          (=* EB CR field-separator component-separator sub-component-separator repetition-separator n)
           (do (.unread reader n) (not-empty (.toString sb)))
 
           (= escape-character n)
@@ -117,7 +128,7 @@
         (= EOS n)
         (unwrap1 xs)
 
-        (#{EB CR field-separator component-separator sub-component-separator repetition-separator} n)
+        (=* EB CR field-separator component-separator sub-component-separator repetition-separator n)
         (do (.unread reader n) (unwrap1 xs))
 
         :else
@@ -135,7 +146,7 @@
         (= EOS n)
         (unwrap1 xs)
 
-        (#{EB CR field-separator component-separator sub-component-separator} n)
+        (=* EB CR field-separator component-separator sub-component-separator n)
         (do (.unread reader n) (unwrap1 xs))
 
         (= repetition-separator n)
@@ -156,7 +167,7 @@
       (= EOS n)
       (unwrap1 xs)
 
-      (#{EB CR field-separator component-separator} n)
+      (=* EB CR field-separator component-separator n)
       (do (.unread reader n) (unwrap1 xs))
 
       (= repetition-separator n)
@@ -190,7 +201,7 @@
       (= EOS n)
       (unwrap1 xs)
 
-      (#{EB CR field-separator} n)
+      (=* EB CR field-separator n)
       (do (.unread reader n) (unwrap1 xs))
 
       :else
@@ -208,10 +219,9 @@
   (loop [xs []]
     (let [n (.read reader)]
       (cond
-        (= EB n)
-        (do (.unread reader n) xs)
+        (= EB n) (do (.unread reader n) xs)
 
-        (#{EOS CR} n) xs
+        (=* EOS CR n) xs
 
         :else
         (recur (conj xs (read-field encoding-characters reader)))))))
@@ -225,7 +235,7 @@
         (.toString sb)
         (let [n (.read reader)]
           (cond
-            (#{EOS EB} n)
+            (=* EOS EB n)
             (throw (ex-info "EOF while reading segment identifier" {:n n}))
 
             :else
@@ -264,7 +274,7 @@
   "Given a reader, read an encoding character defined in the MSH.2 HL7 field."
   [^PushbackReader reader]
   (let [n (.read reader)]
-    (if (#{EOS EB} n)
+    (if (=* EOS EB n)
       (throw (ex-info "EOF while reading encoding characters" {:n n}))
       n)))
 
@@ -281,10 +291,10 @@
             id))
         (let [n (.read reader)]
           (cond
-            (#{EOS EB} n)
+            (=* EOS EB n)
             (throw (ex-info "EOF while reading segment identifier" {:n n}))
 
-            (#{SB} n)
+            (= SB n)
             (throw
               (ex-info (str
                          "Unexpected MLLP start-of-block character"
@@ -357,7 +367,7 @@
           (= SB n)
           (recur true (.read reader))
 
-          (#{ACK NAK} n)
+          (=* ACK NAK n)
           (do (.append sb (char n))
             (recur seen-sb (.read reader)))
 
