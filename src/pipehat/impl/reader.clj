@@ -20,7 +20,9 @@
 
   Expands to:
 
-      (or (= 10 1) (= 10 2) (= 10 3))"
+      (or (= 10 1) (= 10 2) (= 10 3))
+
+  For performance."
   [& args]
   (let [a# (last args)]
     (list* 'or (map (fn [b#] (list '= a# b#)) (butlast args)))))
