@@ -10,7 +10,17 @@
   [s]
   (-> s StringReader. PushbackReader.))
 
-(defmacro =*
+(defmacro ^:private =*
+  "Given a list of objects, return an or-expression that checks whether the last
+  object equals any of the preceding objects.
+
+  For example:
+
+      (=* 1 2 3 10)
+
+  Expands to:
+
+      (or (= 10 1) (= 10 2) (= 10 3))"
   [& args]
   (let [a# (last args)]
     (list* 'or (map (fn [b#] (list '= a# b#)) (butlast args)))))
