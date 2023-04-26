@@ -89,6 +89,11 @@
   (read-escape-sequence encoding-characters (<< "F\\"))
   ,,,)
 
+(defn ^:private str-or-nil
+  [^String s]
+  (when-not (zero? (.length s))
+    s))
+
 (defn read-string
   "Given a map of encoding characters and a reader, read a string."
   [{:keys [field-separator repetition-separator component-separator sub-component-separator escape-character]
@@ -99,10 +104,10 @@
       (let [n (.read reader)]
         (cond
           (= EOS n)
-          (not-empty (.toString sb))
+          (str-or-nil (.toString sb))
 
           (=* EB CR field-separator component-separator sub-component-separator repetition-separator n)
-          (do (.unread reader n) (not-empty (.toString sb)))
+          (do (.unread reader n) (str-or-nil (.toString sb)))
 
           (= escape-character n)
           (do
