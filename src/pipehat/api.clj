@@ -168,3 +168,18 @@
   (.write writer EB)
   (.write writer CR)
   (.flush writer))
+
+(comment
+  (require '[criterium.core :as criterium])
+  (require 'clj-async-profiler.core)
+
+  (let [reader (java.io.PushbackReader. (clojure.java.io/reader "samples/sample-v2.5.1-oru-r01-1.hl7"))])
+
+  (clj-async-profiler.core/profile
+    (with-open [reader (java.io.PushbackReader. (clojure.java.io/reader "samples/sample-v2.5.1-oru-r01-1.hl7"))]
+      (read reader)))
+
+  (criterium.core/quick-bench
+    (with-open [reader (java.io.PushbackReader. (clojure.java.io/reader "samples/sample-v2.5.1-oru-r01-1.hl7"))]
+      (read reader)))
+  ,,,)

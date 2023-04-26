@@ -1,7 +1,6 @@
 (ns pipehat.impl.reader
   (:refer-clojure :exclude [read read-string])
-  (:require [clojure.string :as string]
-            [pipehat.const :refer [CR SB EB ACK NAK]]
+  (:require [pipehat.const :refer [CR SB EB ACK NAK]]
             [pipehat.impl.defaults :refer [encoding-characters]]
             [pipehat.impl.const :refer [EOS SOE]])
   (:import (java.io PushbackReader StringReader)))
@@ -328,13 +327,19 @@
   [^PushbackReader reader]
   (let [id (read-header-segment-identifier reader)
 
+        field-separator (read-encoding-character reader)
+        component-separator (read-encoding-character reader)
+        repetition-separator (read-encoding-character reader)
+        escape-character (read-encoding-character reader)
+        sub-component-separator (read-encoding-character reader)
+
         {:keys [field-separator] :as encoding-characters}
         (array-map
-          :field-separator (read-encoding-character reader)
-          :component-separator (read-encoding-character reader)
-          :repetition-separator (read-encoding-character reader)
-          :escape-character (read-encoding-character reader)
-          :sub-component-separator (read-encoding-character reader))]
+          :field-separator field-separator
+          :component-separator component-separator
+          :repetition-separator repetition-separator
+          :escape-character escape-character
+          :sub-component-separator sub-component-separator)]
 
     {:encoding-characters encoding-characters
 
@@ -342,7 +347,12 @@
      (let [fields (read-fields encoding-characters reader)]
        [id
         (into [(-> field-separator char str)
-               (string/join (map char (vals (rest encoding-characters))))]
+               (let [sb (StringBuilder.)]
+                 (.append sb ^char (char component-separator))
+                 (.append sb ^char (char repetition-separator))
+                 (.append sb ^char (char escape-character))
+                 (.append sb ^char (char sub-component-separator))
+                 (.toString sb))]
           fields)])}))
 
 (comment
