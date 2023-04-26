@@ -6,6 +6,8 @@
             [pipehat.impl.const :refer [EOS SOE]])
   (:import (java.io PushbackReader StringReader)))
 
+(set! *warn-on-reflection* true)
+
 (defn <<
   [s]
   (-> s StringReader. PushbackReader.))
@@ -358,7 +360,7 @@
 
   When in MLLP mode, returns a string when the message is an MLLP ACK/NAK
   message, else a vector."
-  [reader {:keys [protocol]}]
+  [^PushbackReader reader {:keys [protocol]}]
   (if (= :mllp protocol)
     (let [n (.read reader)
           sb (StringBuilder.)]

@@ -3,6 +3,8 @@
             [pipehat.impl.util :refer [element-type]])
   (:import (java.io BufferedWriter)))
 
+(set! *warn-on-reflection* true)
+
 (defn ^:private escaping-write
   [escape-character ^BufferedWriter writer ^String s]
   (.write writer ^int escape-character)
@@ -68,7 +70,7 @@
       (rest segment))))
 
 (defn ^:private write-segments
-  [encoding-characters writer segments]
+  [encoding-characters ^BufferedWriter writer segments]
   (run!
     (fn [segment]
       (write-segment encoding-characters writer segment)
