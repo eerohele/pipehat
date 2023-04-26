@@ -121,7 +121,11 @@
 (defn unwrap1
   "Given a coll, if the coll has one element, return the element, else coll."
   [xs]
-  (if (next xs) xs (first xs)))
+  (let [c (count xs)]
+    (cond
+      (zero? c) nil
+      (= 1 c) (first xs)
+      :else xs)))
 
 (comment
   (unwrap1 nil)
