@@ -1,0 +1,10 @@
+(require '[clojure.java.io :as io])
+(require '[clojure.string :as string])
+(require '[criterium.core :refer [quick-bench]])
+(require '[pipehat.api :as hl7])
+
+(def sample-files
+  (mapv slurp (filter #(string/ends-with? (.getName %) ".hl7") (.listFiles (io/file "samples")))))
+
+(quick-bench (run! hl7/read-string sample-files))
+ 
