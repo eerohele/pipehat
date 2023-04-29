@@ -50,7 +50,7 @@ For more examples, see [`hello.repl`](https://github.com/eerohele/pipehat/blob/m
 
 ## API
 
-See [API.md](https://github.com/eerohele/pipehat/blob/main/API.md).
+See [API.md](https://eerohele.github.io/pipehat/).
 
 ## Prior art
 
