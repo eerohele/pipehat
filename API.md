@@ -12,7 +12,7 @@ Read and write vertical bar encoded HL7 messages (v2.x).
 ```
 
 
-Given a java.io.BufferedWriter, write a Commit Acknowledgement Block (ACK)
+Given a `java.io.BufferedWriter`, write a Commit Acknowledgement Block (ACK)
   into the writer and flush.
 <br><sub>[source](null/blob/null/src/pipehat/api.clj#L150-L159)</sub>
 ## `nak`
@@ -22,8 +22,8 @@ Given a java.io.BufferedWriter, write a Commit Acknowledgement Block (ACK)
 ```
 
 
-Given a java.io.BufferedWriter, write a Negative Commit Acknowledgement Block
-  (NAK) into the writer and flush.
+Given a `java.io.BufferedWriter`, write a Negative Commit Acknowledgement
+  Block (NAK) into the writer and flush.
 <br><sub>[source](null/blob/null/src/pipehat/api.clj#L161-L170)</sub>
 ## `read`
 ``` clojure
@@ -33,13 +33,13 @@ Given a java.io.BufferedWriter, write a Negative Commit Acknowledgement Block
 ```
 
 
-Given a java.io.PushbackReader, parse the HL7 message in the reader and
+Given a `java.io.PushbackReader`, parse the HL7 message in the reader and
   return the result.
 
   Options:
 
-  :protocol
-    Iff :mllp, enable MLLP mode. In MLLP mode, the parser discards every
+  `:protocol`
+    Iff `:mllp`, enable MLLP mode. In MLLP mode, the parser discards every
     character preceding the MLLP start-of-block (0x0B) character.
 <br><sub>[source](null/blob/null/src/pipehat/api.clj#L17-L30)</sub>
 ## `read+string`
@@ -50,13 +50,13 @@ Given a java.io.PushbackReader, parse the HL7 message in the reader and
 ```
 
 
-Given a java.io.Reader, parse the HL7 message in the reader and return a two-
+Given a `java.io.Reader`, parse the HL7 message in the reader and return a two-
   element vector where the first element is the parsed message and the second
   element is a string containing the message.
 
   Same options as read.
 
-  Caller must close the reader, as with read.
+  Caller must close the reader, as with `read`.
 <br><sub>[source](null/blob/null/src/pipehat/api.clj#L66-L84)</sub>
 ## `read-string`
 ``` clojure
@@ -97,13 +97,13 @@ Given a HL7 message parsed by read, shape it into a map that's easy to reach
 ```
 
 
-Given a java.io.BufferedWriter and a vector representing a HL7 message
+Given a `java.io.BufferedWriter` and a vector representing a HL7 message
   (presumably parsed by read), write the message into the writer.
 
   Options:
 
-  :protocol
-    Iff :mllp, wrap message with MLLP start-of-block (0x0B) and end-of-block
+  `:protocol`
+    Iff `:mllp`, wrap message with MLLP start-of-block (0x0B) and end-of-block
     (0x1C) characters.
 <br><sub>[source](null/blob/null/src/pipehat/api.clj#L107-L121)</sub>
 ## `write-string`
@@ -114,8 +114,8 @@ Given a java.io.BufferedWriter and a vector representing a HL7 message
 ```
 
 
-Given a vector representing a HL7 message (presumably parsed by read), write
-  the message into a string and return the string.
+Given a vector representing a HL7 message (presumably parsed by `read`),
+  write the message into a string and return the string.
 <br><sub>[source](null/blob/null/src/pipehat/api.clj#L128-L137)</sub>
 # pipehat.const 
 
