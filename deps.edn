@@ -1,14 +1,7 @@
-{:aliases {:dev {:extra-paths ["test"]
+{:aliases {:dev {:extra-paths ["dev/src" "test"]
                  :extra-deps {org.clojure/test.check {:mvn/version "1.1.1"}
                               io.github.cognitect-labs/test-runner {:git/tag "v0.5.1" :git/sha "dfb30dd"}
-                              criterium/criterium {:mvn/version "0.4.6"}}}
-
-           :quickdoc
-           {:deps {org.babashka/cli {:mvn/version "0.4.36"}
-                   io.github.borkdude/quickdoc
-                   {:deps/root "jvm"
-                    :git/sha "c5320cbe311b651a60b47f4d00d7e8ab63291b6e"}}
-            :main-opts ["-m" "babashka.cli.exec" "quickdoc.api" "quickdoc"]
-            :exec-args {:github/repo "https://github.com/eerohele/pipehat"
-                        :git/branch "main"
-                        :source-paths ["src/pipehat/api.clj"]}}}}
+                              criterium/criterium {:mvn/version "0.4.6"}
+                              commonmark-hiccup/commonmark-hiccup {:mvn/version "0.2.0"}
+                              me.flowthing/engraph {:git/url "https://github.com/eerohele/engraph.git"
+                                                    :sha "0bb6fd13de2e33db7f77d63e4c9035282e0f5163"}}}}}
