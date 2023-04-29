@@ -20,9 +20,8 @@
 
   Options:
 
-  `:protocol`
-    Iff `:mllp`, enable MLLP mode. In MLLP mode, the parser discards every
-    character preceding the MLLP start-of-block (0x0B) character."
+  `:protocol`: Iff `:mllp`, enable MLLP mode. In MLLP mode, the parser discards
+  every character preceding the MLLP start-of-block (0x0B) character."
   ([reader]
    (read reader {:protocol :none}))
   ([reader options]
@@ -110,9 +109,8 @@
 
   Options:
 
-  `:protocol`
-    Iff `:mllp`, wrap message with MLLP start-of-block (0x0B) and end-of-block
-    (0x1C) characters."
+  `:protocol`: Iff `:mllp`, wrap message with MLLP start-of-block (0x0B) and
+  end-of-block (0x1C) characters."
   ([writer message]
    (write writer message {:protocol :none}))
   ([writer message options]
