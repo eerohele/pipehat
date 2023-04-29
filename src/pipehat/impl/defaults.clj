@@ -1,4 +1,4 @@
-(ns pipehat.impl.defaults)
+(ns ^:no-doc pipehat.impl.defaults)
 
 (def encoding-characters
   "A map of the default, recommended HL7 encoding characters."

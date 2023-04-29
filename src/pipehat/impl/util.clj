@@ -1,4 +1,4 @@
-(ns pipehat.impl.util)
+(ns ^:no-doc pipehat.impl.util)
 
 (defn element-type
   "Given an IMeta, return its element type."

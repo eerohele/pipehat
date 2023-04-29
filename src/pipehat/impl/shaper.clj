@@ -1,4 +1,4 @@
-(ns pipehat.impl.shaper
+(ns ^:no-doc pipehat.impl.shaper
   (:require [clojure.string :as string]
             [pipehat.impl.util :refer [element-type]]))
 

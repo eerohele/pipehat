@@ -1,4 +1,4 @@
-(ns pipehat.impl.writer
+(ns ^:no-doc pipehat.impl.writer
   (:require [pipehat.const :refer [SB EB FF CR]]
             [pipehat.impl.util :refer [element-type]])
   (:import (java.io BufferedWriter)))

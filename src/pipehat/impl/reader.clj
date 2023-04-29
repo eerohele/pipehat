@@ -1,4 +1,4 @@
-(ns pipehat.impl.reader
+(ns ^:no-doc pipehat.impl.reader
   (:refer-clojure :exclude [read read-string])
   (:require [pipehat.const :refer [CR SB EB ACK NAK]]
             [pipehat.impl.defaults :refer [encoding-characters]]
