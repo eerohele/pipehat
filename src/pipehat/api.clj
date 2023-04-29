@@ -15,13 +15,13 @@
      (format "expected: %s, got: %s" (.getName ~c) (some-> ~x class .getName))))
 
 (defn read
-  "Given a java.io.PushbackReader, parse the HL7 message in the reader and
+  "Given a `java.io.PushbackReader`, parse the HL7 message in the reader and
   return the result.
 
   Options:
 
-  :protocol
-    Iff :mllp, enable MLLP mode. In MLLP mode, the parser discards every
+  `:protocol`
+    Iff `:mllp`, enable MLLP mode. In MLLP mode, the parser discards every
     character preceding the MLLP start-of-block (0x0B) character."
   ([reader]
    (read reader {:protocol :none}))
@@ -47,10 +47,10 @@
   ,,,)
 
 (defn ^:private string-capturing-pushback-reader
-  "Given a java.io.Reader, return a java.io.PushbackReader that captures the
+  "Given a `java.io.Reader`, return a `java.io.PushbackReader` that captures the
   characters it reads into a string.
 
-  To get the string, call .toString on the returned object."
+  To get the string, call `.toString` on the returned object."
   ^Reader [reader]
   (let [sb (StringBuilder.)]
     (proxy [PushbackReader] [reader]
@@ -64,13 +64,13 @@
         (.toString sb)))))
 
 (defn read+string
-  "Given a java.io.Reader, parse the HL7 message in the reader and return a two-
+  "Given a `java.io.Reader`, parse the HL7 message in the reader and return a two-
   element vector where the first element is the parsed message and the second
   element is a string containing the message.
 
   Same options as read.
 
-  Caller must close the reader, as with read."
+  Caller must close the reader, as with `read`."
   ([reader]
    (read+string reader {}))
   ([reader options]
@@ -105,13 +105,13 @@
 (comment (get-in (-> "MSH|^~\\&|ACME" read-string shape) ["MSH" 0 ["MSH" 3]]) ,,,)
 
 (defn write
-  "Given a java.io.BufferedWriter and a vector representing a HL7 message
+  "Given a `java.io.BufferedWriter` and a vector representing a HL7 message
   (presumably parsed by read), write the message into the writer.
 
   Options:
 
-  :protocol
-    Iff :mllp, wrap message with MLLP start-of-block (0x0B) and end-of-block
+  `:protocol`
+    Iff `:mllp`, wrap message with MLLP start-of-block (0x0B) and end-of-block
     (0x1C) characters."
   ([writer message]
    (write writer message {:protocol :none}))
@@ -126,8 +126,8 @@
   ,,,)
 
 (defn write-string
-  "Given a vector representing a HL7 message (presumably parsed by read), write
-  the message into a string and return the string."
+  "Given a vector representing a HL7 message (presumably parsed by `read`),
+  write the message into a string and return the string."
   ([message]
    (write-string message {:protocol :none}))
   ([message options]
@@ -148,7 +148,7 @@
   ,,,)
 
 (defn ack
-  "Given a java.io.BufferedWriter, write a Commit Acknowledgement Block (ACK)
+  "Given a `java.io.BufferedWriter`, write a Commit Acknowledgement Block (ACK)
   into the writer and flush."
   [^BufferedWriter writer]
   (expect BufferedWriter writer)
@@ -159,8 +159,8 @@
   (.flush writer))
 
 (defn nak
-  "Given a java.io.BufferedWriter, write a Negative Commit Acknowledgement Block
-  (NAK) into the writer and flush."
+  "Given a `java.io.BufferedWriter`, write a Negative Commit Acknowledgement
+  Block (NAK) into the writer and flush."
   [^BufferedWriter writer]
   (expect BufferedWriter writer)
   (.write writer SB)
