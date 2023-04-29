@@ -29,7 +29,7 @@
    (reader/read reader options)))
 
 (defn read-string
-  "Given a string containing a HL7 message, parse the string and return the
+  "Given a string containing an HL7 message, parse the string and return the
   result."
   [s]
   (expect String s)
@@ -85,7 +85,7 @@
 (comment (read+string (StringReader. "MSH|^~\\&")) ,,,)
 
 (defn shape
-  "Given a HL7 message parsed by read, shape it into a map that's easy to reach
+  "Given an HL7 message parsed by read, shape it into a map that's easy to reach
   into with Clojure core functions. For example:
 
   ```clojure
@@ -96,7 +96,7 @@
   ```
 
   Shaping is a lossy operation: you CAN NOT round-trip a shaped message back
-  into a HL7 string.
+  into an HL7 string.
 
   Shaping is therefore only useful if you need to extract data from a message.
   It is not useful if you need to update a message."
@@ -106,7 +106,7 @@
 (comment (get-in (-> "MSH|^~\\&|ACME" read-string shape) ["MSH" 0 ["MSH" 3]]) ,,,)
 
 (defn write
-  "Given a `java.io.BufferedWriter` and a vector representing a HL7 message
+  "Given a `java.io.BufferedWriter` and a vector representing an HL7 message
   (presumably parsed by read), write the message into the writer.
 
   Options:
@@ -126,7 +126,7 @@
   ,,,)
 
 (defn write-string
-  "Given a vector representing a HL7 message (presumably parsed by `read`),
+  "Given a vector representing an HL7 message (presumably parsed by `read`),
   write the message into a string and return the string."
   ([message]
    (write-string message {:protocol :none}))
