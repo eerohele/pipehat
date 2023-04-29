@@ -48,6 +48,10 @@ user=> (get-in *1 ["OBX" 0 ["OBX" 3] ["OBX" 3 3]])
 
 For more examples, see [`hello.repl`](https://github.com/eerohele/pipehat/blob/main/repl/hello.repl).
 
+## API
+
+See [API.md](https://github.com/eerohele/pipehat/blob/main/API.md).
+
 ## Prior art
 
 - [Clojure HL7 Version 2.x Message Parser](https://github.com/cmiles74/clojure-hl7-messaging-2-parser)
