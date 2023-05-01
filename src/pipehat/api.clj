@@ -63,9 +63,9 @@
         (.toString sb)))))
 
 (defn read+string
-  "Given a `java.io.Reader`, parse the HL7 message in the reader and return a two-
-  element vector where the first element is the parsed message and the second
-  element is a string containing the message.
+  "Given a `java.io.Reader`, parse the HL7 message in the reader and return a
+  two-element vector where the first element is the parsed message and the
+  second element is a string containing the message.
 
   Same options as read.
 
