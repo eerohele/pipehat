@@ -350,8 +350,8 @@
     (is (= (str (char SB) (char NAK) (char EB) (char CR)) (str sw)))))
 
 (deftest read+string
-  (is (= [[["MSH" ["|" "^~\\&"]]] "MSH|^~\\&"]
-        (sut/read+string (StringReader. "MSH|^~\\&"))))
+  (is (= [[["MSH" ["|" "^~\\&" "GHH LAB" "ELAB-3"]]] "MSH|^~\\&|GHH LAB|ELAB-3"]
+        (sut/read+string (StringReader. "MSH|^~\\&|GHH LAB|ELAB-3"))))
 
   (try (sut/read+string (StringReader. "MSH|^~\\"))
     (catch clojure.lang.ExceptionInfo ex

@@ -54,13 +54,26 @@
   (let [sb (StringBuilder.)]
     (proxy [PushbackReader] [reader]
       (read []
-        (let [^Reader this this ; Sidestep reflection warning.
+        (let [^PushbackReader this this ; Sidestep reflection warning.
               n (proxy-super read)]
           (when (pos? n) (.append sb (char n)))
           n))
 
+      (unread [^long n]
+        (let [^PushbackReader this this]
+          ;; When unreading, delete the character from the StringBuilder, too.
+          (.delete sb (dec (.length sb)) (.length sb))
+          (proxy-super unread n)))
+
       (toString []
         (.toString sb)))))
+
+(comment
+  (with-open [reader (string-capturing-pushback-reader (StringReader. "a"))]
+    (let [n (.read reader)]
+      (.unread reader n))
+    (.toString reader))
+  ,,,)
 
 (defn read+string
   "Given a `java.io.Reader`, parse the HL7 message in the reader and return a
