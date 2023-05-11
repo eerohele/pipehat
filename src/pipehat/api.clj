@@ -62,7 +62,7 @@
       (unread [^long n]
         (let [^PushbackReader this this]
           ;; When unreading, delete the character from the StringBuilder, too.
-          (.delete sb (dec (.length sb)) (.length sb))
+          (.deleteCharAt sb (unchecked-dec (.length sb)))
           (proxy-super unread n)))
 
       (toString []
