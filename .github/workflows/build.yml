@@ -25,4 +25,4 @@ jobs:
             ${{ runner.os }}-maven
 
       - name: Run unit tests
-        run: clojure -X:dev cognitect.test-runner.api/test
+        run: make test
