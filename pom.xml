@@ -21,4 +21,22 @@
       <url>https://repo.clojars.org/</url>
     </repository>
   </repositories>
+  <distributionManagement>
+    <repository>
+      <id>clojars</id>
+      <name>Clojars repository</name>
+      <url>https://clojars.org/repo</url>
+    </repository>
+  </distributionManagement>
+  <description>Pipehat (|^) is a zero-dependency Clojure library for reading and writing HL7 version 2 messages encoded using vertical bar ("pipehat") encoding.</description>
+  <url>https://eerohele.github.io/pipehat</url>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/license/mit/</url>
+    </license>
+  </licenses>
+  <scm>
+    <url>https://github.com/eerohele/pipehat</url>
+  </scm>
 </project>
