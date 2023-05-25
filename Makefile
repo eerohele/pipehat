@@ -6,5 +6,5 @@ test:
 pom: pom.xml
 	@clojure -Spom
 
-deploy: test, pom
+deploy: test pom
 	@mvn deploy
