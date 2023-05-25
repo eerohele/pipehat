@@ -61,7 +61,7 @@
       ["1""SN" ["1554-5" "GLUCOSE" "POST 12H CFST:MCNC:PT:SER/PLAS:QN"] nil [nil "182"] "mg/dl" "70_105" "H" nil nil "F"]]]
 
     ;; Discard characters preceding SB
-    (str "ABC"(char SB) "MSH|^~\\&\r"(char EB) (char CR))
+    (str "ABC" (char SB) "MSH|^~\\&\r"(char EB) (char CR))
     [["MSH" ["|" "^~\\&"]]]))
 
 (deftest write
