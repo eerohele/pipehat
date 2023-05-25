@@ -1,5 +1,7 @@
 # Pipehat
 
+[![Clojars Project](https://img.shields.io/clojars/v/me.flowthing/pipehat.svg)](https://clojars.org/me.flowthing/pipehat)
+
 Pipehat (`|^`) is a zero-dependency Clojure library for reading and writing [HL7 version 2](https://www.hl7.org/implement/standards/product_brief.cfm?product_id=185) messages encoded using vertical bar ("pipehat") encoding.
 
 ## Features
