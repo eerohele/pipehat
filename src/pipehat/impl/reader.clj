@@ -81,7 +81,9 @@
             terminator (.read reader)]
 
         (when (not= escape-character terminator)
-          (throw (ex-info (format "Expected escape character while reading escape sequence, got \"%s\"" (char terminator)) {:char (char terminator)})))
+          (throw
+            (ex-info (format "Expected escape character while reading escape sequence, got \"%s\"" (char terminator))
+              {:char (char terminator)})))
 
         ret))))
 
