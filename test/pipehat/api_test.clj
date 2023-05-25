@@ -299,11 +299,11 @@
 (deftest roundtrip-samples
   (doseq [file (sample-files)]
     (let [input (slurp (io/reader file))]
-      (is (= input (sut/write-string (sut/read-string input)))))))
+      (is (= input (-> input sut/read-string sut/write-string))))))
 
 (defspec roundtrip-generative 25
-  (prop/for-all [message (spec/gen ::specs/message)]
-    (= message (sut/read-string (sut/write-string message)))))
+  (prop/for-all [input (spec/gen ::specs/message)]
+    (= input (-> input sut/write-string sut/read-string))))
 
 (comment
   (-> [["MSH" ["" ""]]] sut/write-string sut/read-string)
