@@ -1,4 +1,4 @@
-(ns ^:no-doc pipehat.specs
+(ns ^:no-doc pipehat.impl.specs
   (:require [clojure.string :as string]
             [clojure.spec.alpha :as spec]
             [clojure.spec.gen.alpha :as gen]
