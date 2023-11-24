@@ -1,6 +1,6 @@
 (ns ^:no-doc pipehat.impl.reader
   (:refer-clojure :exclude [read read-string])
-  (:require [pipehat.const :refer [CR SB EB ACK NAK]]
+  (:require [pipehat.const :refer [CR NL SB EB ACK NAK]]
             [pipehat.impl.defaults :refer [encoding-characters]]
             [pipehat.impl.const :refer [EOS SOE]])
   (:import (java.io PushbackReader StringReader)))
@@ -238,14 +238,23 @@
 
 (defn read-fields
   "Given a map of encoding characters and a reader, read all fields until a
-  terminator (EB, EOS, or CR)."
+  terminator (EB, EOS, or CR NL)."
   [encoding-characters ^PushbackReader reader]
   (loop [xs []]
     (let [n (.read reader)]
       (cond
         (= EB n) (do (.unread reader n) xs)
 
-        (=* EOS CR n) xs
+        (=* EOS n) xs
+
+        (=* CR n)
+        (let [x (.read reader)]
+          (cond
+            (=* EOS NL x) xs
+            ; because you cannot unread a EOS
+            :else
+            (do (.unread reader x)
+                xs)))
 
         :else
         (recur (conj xs (read-field encoding-characters reader)))))))
