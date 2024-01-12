@@ -51,6 +51,12 @@ For more examples, see [`hello.repl`](https://github.com/eerohele/pipehat/blob/m
 
 See [API docs](https://eerohele.github.io/pipehat/).
 
+## Status
+
+Stable. There will be no breaking changes to the API. No new features are planned.
+
+Everything apart from the `pipehat.api` namespace is internal and subject to change.
+
 ## Prior art
 
 - [Clojure HL7 Version 2.x Message Parser](https://github.com/cmiles74/clojure-hl7-messaging-2-parser)
