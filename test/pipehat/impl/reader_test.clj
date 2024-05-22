@@ -57,15 +57,7 @@
       "AA&|" ["AA" nil]
       "AA&BB" ["AA" "BB"]
       "AA&&CC" ["AA" nil "CC"]
-      "AA&BB&CC" ["AA" "BB" "CC"]
-      "~AA" [nil "AA"]
-      "AA~" ["AA" nil]
-      "AA~|" ["AA" nil]
-      "AA~BB" ["AA" "BB"]
-      "AA~~BB" ["AA" nil "BB"]
-      "AA~BB~CC" ["AA" "BB" "CC"]
-      "AA&BB~CC&DD" ["AA" ["BB" "CC"] "DD"]
-      "AA&BB~CC~DD&EE" ["AA" ["BB" "CC" "DD"] "EE"])))
+      "AA&BB&CC" ["AA" "BB" "CC"])))
 
 (deftest read-field
   (letfn [(parse [in] (sut/read-field encoding-characters (<< in)))]
@@ -83,7 +75,18 @@
       "AA^" ["AA" nil]
       "AA^|" ["AA" nil]
       "AA^^BB" ["AA" nil "BB"]
-      "AA^BB^CC" ["AA" "BB" "CC"])))
+      "AA^BB^CC" ["AA" "BB" "CC"]
+      "~AA" [nil "AA"]
+      "AA~" ["AA" nil]
+      "AA~BB" ["AA" "BB"]
+      "AA~~BB" ["AA" nil "BB"]
+      "AA~BB~CC" ["AA" "BB" "CC"]
+      "AA~^" ["AA" [nil nil]]
+      "AA^BB~" [["AA" "BB"] nil]
+      "AA^BB~CC" [["AA" "BB"] "CC"]
+      "AA^BB~CC^DD" [["AA" "BB"] ["CC" "DD"]]
+      "AA&BB~CC" [["AA" "BB"] "CC"]
+      "AA^BB&CC~DD" [["AA" ["BB" "CC"]] "DD"])))
 
 (deftest read-header-segment
   (letfn [(parse [in] (sut/read-header-segment (<< in)))]
@@ -118,6 +121,7 @@
       "ABC|~B" [["ABC" [[nil "B"]]]]
       "ABC|A~" [["ABC" [["A" nil]]]]
       "ABC|A^B&C^D" [["ABC" [["A" ["B" "C"] "D"]]]]
-      "ABC|A^B~C^D" [["ABC" [["A" ["B" "C"] "D"]]]])
+      "ABC|A~B" [["ABC" [["A" "B"]]]]
+      "ABC|A^B~C^D" [["ABC" [[["A" "B"] ["C" "D"]]]]])
 
     (is (thrown-with-msg? ExceptionInfo #"EOF while reading segment identifier" (parse "^")))))

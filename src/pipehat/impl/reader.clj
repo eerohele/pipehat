@@ -141,8 +141,8 @@
   (unwrap1 [:a :b])
   ,,,)
 
-(defn read-repetition
-  "Given a map of encoding characters and a reader, read a repetition element."
+(defn read-sub-component
+  "Given a map of encoding characters and a reader, read a sub-component."
   [{:keys [field-separator repetition-separator component-separator sub-component-separator]
     :as encoding-characters}
    ^PushbackReader reader]
@@ -159,28 +159,6 @@
         (do (.unread reader n)
           (recur (conj xs (read-string encoding-characters reader))))))))
 
-(defn read-sub-component
-  "Given a map of encoding characters and a reader, read a sub-component."
-  [{:keys [field-separator repetition-separator component-separator sub-component-separator]
-    :as encoding-characters}
-   ^PushbackReader reader]
-  (loop [xs []]
-    (let [n (.read reader)]
-      (cond
-        (= EOS n)
-        (unwrap1 xs)
-
-        (=* EB CR field-separator component-separator sub-component-separator n)
-        (do (.unread reader n) (unwrap1 xs))
-
-        (= repetition-separator n)
-        (let [repetition (read-repetition encoding-characters reader)]
-          (recur (with-meta (conj xs repetition) {:pipehat.api/element-type :repetition})))
-
-        :else
-        (do (.unread reader n)
-          (recur (conj xs (read-string encoding-characters reader))))))))
-
 (defn read-component
   "Given a map of encoding characters and a reader, read a component."
   [{:keys [field-separator repetition-separator component-separator sub-component-separator]
@@ -191,14 +169,8 @@
       (= EOS n)
       (unwrap1 xs)
 
-      (=* EB CR field-separator component-separator n)
+      (=* EB CR field-separator component-separator repetition-separator n)
       (do (.unread reader n) (unwrap1 xs))
-
-      (= repetition-separator n)
-      (let [repetition (read-repetition encoding-characters reader)]
-        (recur
-          (with-meta (conj xs repetition) {:pipehat.api/element-type :repetition})
-          (.read reader)))
 
       (= sub-component-separator n)
       (let [sub-component (read-sub-component encoding-characters reader)]
@@ -215,6 +187,23 @@
   (read-component encoding-characters (<< "A"))
   ,,,)
 
+(defn read-repetition
+  "Given a map of encoding characters and a reader, read a repetition element."
+  [{:keys [field-separator repetition-separator]
+    :as encoding-characters}
+   ^PushbackReader reader]
+  (loop [xs [] n SOE]
+    (cond
+      (= EOS n)
+      (unwrap1 xs)
+
+      (=* EB CR field-separator repetition-separator n)
+      (do (.unread reader n) (unwrap1 xs))
+
+      :else
+      (let [component (read-component encoding-characters reader)]
+        (recur (with-meta (conj xs component) {:pipehat.api/element-type :component}) (.read reader))))))
+
 (defn read-field
   "Given a map of encoding characters and a reader, read a field."
   [{:keys [field-separator]
@@ -229,11 +218,14 @@
       (do (.unread reader n) (unwrap1 xs))
 
       :else
-      (let [component (read-component encoding-characters reader)]
-        (recur (with-meta (conj xs component) {:pipehat.api/element-type :component}) (.read reader))))))
+      (let [repetition (read-repetition encoding-characters reader)]
+        (recur (with-meta (conj xs repetition) {:pipehat.api/element-type :repetition}) (.read reader))))))
 
 (comment
   (read-field encoding-characters (<< "^"))
+  (read-field encoding-characters (<< "ABC||B"))
+  (read-field encoding-characters (<< "1^2~3^4"))
+  (read-field encoding-characters (<< "1~3^4"))
   ,,,)
 
 (defn read-fields
