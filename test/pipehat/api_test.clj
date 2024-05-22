@@ -29,7 +29,7 @@
      ["PID"
       [nil nil "555-44-4444" nil ["EVERYWOMAN" "EVE" "E" nil nil nil "L"] "JONES" "196203520" "F" nil nil ["153 FERNWOOD DR." nil "STATESVILLE" "OH" "35292"] nil "(206)3345232" "(206)752-121" nil nil nil "AC555444444" nil ["67-A4335" "OH" "20030520"]]]
      ["OBR"
-      ["1" ["845439" "GHH OE"] ["1045813" "GHH LAB"] ["1554-5" "GLUCOSE"] nil nil "200202150730" nil nil nil nil nil nil nil [#_repetition ["555-55-5555" "555-66-6666-666"] "PRIMARY" "PATRICIA P" nil nil nil "MD" nil "LEVEL SEVEN HEALTHCARE, INC."] nil nil nil nil nil nil nil nil "F" nil nil nil nil nil ["444-44-4444" "HIPPOCRATES" "HOWARD H" nil nil nil "MD"]]]
+      ["1" ["845439" "GHH OE"] ["1045813" "GHH LAB"] ["1554-5" "GLUCOSE"] nil nil "200202150730" nil nil nil nil nil nil nil #_repetition ["555-55-5555" ["555-66-6666-666" "PRIMARY" "PATRICIA P" nil nil nil "MD" nil "LEVEL SEVEN HEALTHCARE, INC."]] nil nil nil nil nil nil nil nil "F" nil nil nil nil nil ["444-44-4444" "HIPPOCRATES" "HOWARD H" nil nil nil "MD"]]]
      ["OBX"
       ["1""SN" ["1554-5" "GLUCOSE" "POST 12H CFST:MCNC:PT:SER/PLAS:QN"] nil [nil "182"] "mg/dl" "70_105" "H" nil nil "F"]]])
 
@@ -56,7 +56,7 @@
      ["PID"
       [nil nil "555-44-4444" nil ["EVERYWOMAN" "EVE" "E" nil nil nil "L"] "JONES" "196203520" "F" nil nil ["153 FERNWOOD DR." nil "STATESVILLE" "OH" "35292"] nil "(206)3345232" "(206)752-121" nil nil nil "AC555444444" nil ["67-A4335" "OH" "20030520"]]]
      ["OBR"
-      ["1" ["845439" "GHH OE"] ["1045813" "GHH LAB"] ["1554-5" "GLUCOSE"] nil nil "200202150730" nil nil nil nil nil nil nil [#_repetition ["555-55-5555" "555-66-6666-666"] "PRIMARY" "PATRICIA P" nil nil nil "MD" nil "LEVEL SEVEN HEALTHCARE, INC."] nil nil nil nil nil nil nil nil "F" nil nil nil nil nil ["444-44-4444" "HIPPOCRATES" "HOWARD H" nil nil nil "MD"]]]
+      ["1" ["845439" "GHH OE"] ["1045813" "GHH LAB"] ["1554-5" "GLUCOSE"] nil nil "200202150730" nil nil nil nil nil nil nil #_repetition ["555-55-5555" ["555-66-6666-666" "PRIMARY" "PATRICIA P" nil nil nil "MD" nil "LEVEL SEVEN HEALTHCARE, INC."]] nil nil nil nil nil nil nil nil "F" nil nil nil nil nil ["444-44-4444" "HIPPOCRATES" "HOWARD H" nil nil nil "MD"]]]
      ["OBX"
       ["1""SN" ["1554-5" "GLUCOSE" "POST 12H CFST:MCNC:PT:SER/PLAS:QN"] nil [nil "182"] "mg/dl" "70_105" "H" nil nil "F"]]]
 
@@ -165,11 +165,12 @@
               ["MSH" 12] "2.4"}]
             "PID"
             [{["PID" 3]
-              {["PID" 3 1] "191919"
-               ["PID" 3 3] "GENHOS"
-               ["PID" 3 4] ["MR" "371-66-9256"]
-               ["PID" 3 7] "USSSA"
-               ["PID" 3 8] "SS"}
+              [{["PID" 3 1] "191919"
+                ["PID" 3 3] "GENHOS"
+                ["PID" 3 4] "MR"}
+               {["PID" 3 1] "371-66-9256"
+                ["PID" 3 4] "USSSA"
+                ["PID" 3 5] "SS"}]
               ["PID" 4] "253763"
               ["PID" 5] {["PID" 5 1] "MASSIE" ["PID" 5 2] "JAMES" ["PID" 5 3] "A"}
               ["PID" 7] "19560129"
@@ -290,7 +291,19 @@
               ["ROL" 3] {["ROL" 3 1] "CP" ["ROL" 3 3] "HL70443"}
               ["ROL" 4] {["ROL" 4 1] "0148" ["ROL" 4 2] "ADDISON,JAMES"}}]}
 
-          (sut/shape (sut/read reader))))))
+          (sut/shape (sut/read reader)))))
+
+  (is (= ["A" "B"]
+        (-> "MSH|^~\\&|A~B" sut/read-string sut/shape (get-in ["MSH" 0 ["MSH" 3]]))))
+
+  (is (= [{["MSH" 3 1] "A" ["MSH" 3 2] "B"} {["MSH" 3 1] "C" ["MSH" 3 2] "D"}]
+        (-> "MSH|^~\\&|A^B~C^D" sut/read-string sut/shape (get-in ["MSH" 0 ["MSH" 3]]))))
+
+  (is (= [{["MSH" 3 1] {["MSH" 3 1 1] "A" ["MSH" 3 1 2] "B"}
+           ["MSH" 3 2] {["MSH" 3 2 1] "C" ["MSH" 3 2 2] "D"}}
+          {["MSH" 3 1] {["MSH" 3 1 1] "E" ["MSH" 3 1 2] "F"}
+           ["MSH" 3 2] {["MSH" 3 2 1] "G" ["MSH" 3 2 2] "H"}}]
+        (-> "MSH|^~\\&|A&B^C&D~E&F^G&H" sut/read-string sut/shape (get-in ["MSH" 0 ["MSH" 3]])))))
 
 (defn sample-files
   []

@@ -16,19 +16,16 @@
 (spec/def ::sub-component
   (spec/coll-of ::non-empty-string :kind vector?))
 
-(spec/def ::repetition
-  (spec/coll-of ::non-empty-string :kind vector?))
-
-(spec/def ::component*
-  (spec/or :string ::non-empty-string :sub-component ::sub-component :repetition ::repetition))
-
 (spec/def ::component
+  (spec/or :string ::non-empty-string :sub-component ::sub-component))
+
+(spec/def ::repetition
   (spec/with-gen
-    (spec/nilable ::component*)
-    #(gen/fmap (comp unwrap1 not-empty) (spec/gen ::component*))))
+    (spec/nilable ::component)
+    #(gen/fmap (comp unwrap1 not-empty) (spec/gen ::component))))
 
 (spec/def ::field
-  (spec/or :string ::non-empty-string :component ::component))
+  (spec/or :string ::non-empty-string :repetition ::repetition))
 
 (defmacro catvec
   "Like clojure.spec.alpha/cat, but expects and generates a vectors."
