@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file. This change
 ## 1.0.2 (2024-05-23)
 - Fix repetition separator parsing in multi-component fields
 
-  Previous versions of Pipehat parsed the repetition separator (typically `~`) in fields with multiple components (typically separated by `^`). Previously, Pipehat incorrectly parsed `1^2~3^4` into `["1" ["2" "3"] "4"]`. As of this version, Pipehat parses it into `[["1" "2"] ["3" "4"]]`.
+  Previous versions of Pipehat parsed the repetition separator (typically `~`) in fields with multiple components (typically separated by `^`) incorrectly. Previously, Pipehat incorrectly parsed `1^2~3^4` into `["1" ["2" "3"] "4"]`. As of this version, Pipehat parses it into `[["1" "2"] ["3" "4"]]`.
 
 ## 1.0.1 (2023-06-14)
 - Fix Clojars deployment
